@@ -1,4 +1,4 @@
 .metals/
 .bloop/
-.out/
+out/
 .vscode/
