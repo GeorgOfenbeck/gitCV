@@ -42,26 +42,28 @@
         "ghcr.io/devcontainers-contrib/features/tmux-apt-get:1": {},
         "ghcr.io/guiyomh/features/vim:0": {},
         "ghcr.io/georgofenbeck/features/thefuck-pipx:1": {},
-    },
-    "overrideFeatureInstallOrder": [
-        "ghcr.io/devcontainers/features/common-utils:2",
-        "ghcr.io/devcontainers/features/git:1",
-        "ghcr.io/devcontainers-contrib/features/fzf:1",
-        "ghcr.io/georgofenbeck/features/thefuck-pipx:1",
-    ],
-    "mounts": [
-        "source=${localEnv:HOME}/.m2/,target=/root/.m2/,type=bind,consistency=cached",
-    ],
-    // Open the sub-folder with the source code
-    //"workspaceMount": "source=Omg,target=/workspace,type=volume",
-    // "workspaceFolder": "/workspace",
-    "customizations": {
-        "vscode": {
-            "settings": {},
-            "extensions": [
-                "mutantdino.resourcemonitor",
-                "ms-azuretools.vscode-docker",
-                "scalameta.metals",
+        "ghcr.io/georgofenbeck/features/lazygit-linuxbinary:latest": {}
+
+        },
+        "overrideFeatureInstallOrder": [
+            "ghcr.io/devcontainers/features/common-utils:2",
+            "ghcr.io/devcontainers/features/git:1",
+            "ghcr.io/devcontainers-contrib/features/fzf:1",
+            "ghcr.io/georgofenbeck/features/thefuck-pipx:1",
+        ],
+        "mounts": [
+            "source=${localEnv:HOME}/.ssh/,target=/home/vscode/.ssh/,type=bind,consistency=cached",
+        ],
+        // Open the sub-folder with the source code
+        //"workspaceMount": "source=Omg,target=/workspace,type=volume",
+        // "workspaceFolder": "/workspace",
+        "customizations": {
+            "vscode": {
+                "settings": {},
+                "extensions": [
+                    "mutantdino.resourcemonitor",
+                    "ms-azuretools.vscode-docker",
+                    "scalameta.metals",
             ]
         }
     },
