@@ -25,7 +25,8 @@ object main extends App {
         description = "Design and implementation of a cloud native serverless application for a medical data messing system.",
         technologies = List(
             Technology("Kotlin Spring Cloud, Azure Functions", "A serverless redesign of the existing classic java application"),
-            Technology("", "Improving scalability and maintainability issues"),
+            Technology("Azure managed storage Solutions", "Using managed blob, table and queue storage for the serverless application"),
+            Technology("Open Telemetry", "Implementation of distributed tracing"),
         )
     )
     val devOps = Project(
@@ -44,7 +45,11 @@ object main extends App {
         title = "Senior Cloud Architect",
         company = "Swisscom Health",
         description = "Implementation of a big data pipeline for machine learning. Implementation of a high throughput streaming application.",
-        projects = List(medicalPracticeManagmentSoftware)
+        projects = List(
+            medicalPracticeManagmentSoftware,
+            devOps,
+            ragnarok,
+        ),
     )
   }
 
@@ -58,26 +63,38 @@ object main extends App {
         projects = List(
             Project(
                 title = "Big Data Pipeline for Machine Learning",
-                description = "I was responsible for the implementation of a big data pipeline for machine learning. The pipeline was used to train and deploy machine learning models.",
+                description = "Implementing features and improving performance on the ETL data pipeline for ML applications. Reduced the Dev Cycle from larger than a working day to an hour.",
                 technologies = List(
-                    Technology("Kubernetes, AKS, Cilium", "Improving scalability and maintainability issues"),
-                    Technology("Azure managed services (Managed DB, Managed Storage Solutions)", "Migration from vm based solutions to managed services"),
+                    Technology("Apache Spark, HDFS, Cloud Foundary", "working on two different on-premises big data applications"),
                 )
             ),
             Project(
                 title = "High Throughput Streaming Application",
-                description = "I was responsible for the implementation of a high throughput streaming application. The application was used to process high throughput data streams.",
+                description = "Implementation and operation of a real-time streaming application processing 6k msgs/s triggering interactions with customers.",
                 technologies = List(
-                    Technology("Kafka, Kafka Streams", "Implementation of a high throughput streaming application"),
-                    Technology("Kubernetes, AKS, Cilium", "Improving scalability and maintainability issues"),
+                    Technology("Kafka, Akka Streaming, Flink", ""),
                 )
             )
         )
     )
   }
 
-  val start: LocalDate  = LocalDate.of(2022, 12, 31).nn
-  val end: LocalDate = LocalDate.of(2024, 12, 31).nn
+  val ethPhd = Education(
+      end = LocalDate.of(2017, 5, 1).nn,
+      start = LocalDate.of(2011, 10, 1).nn,
+      title = "PhD, Computer Science",
+      school = "ETH Zurich",
+      description = "I worked on the topic of appling generic programming techniques to challenges in metaprogramming in the context of high performance code generators.", 
+  )
+  val ethPhd0 = Education(
+      end = LocalDate.of(2011, 10, 1).nn,
+      start = LocalDate.of(2010, 8, 1).nn,
+      title = "PhD student, Computer Science",
+      school = "ETH Zurich",
+      description = "Before switching topic, I worked my first year on enabling micro transaction support in the kernel of an OS",
+  )
+
+
   val cv = CV("Georg Ofenbeck", "", "", 
   List(
     SwisscomHealth,
