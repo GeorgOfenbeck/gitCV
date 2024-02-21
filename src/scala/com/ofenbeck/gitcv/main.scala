@@ -93,13 +93,50 @@ object main extends App {
       school = "ETH Zurich",
       description = "Before switching topic, I worked my first year on enabling micro transaction support in the kernel of an OS",
   )
+  val ethMsc = Education(
+      end = LocalDate.of(2009, 11, 1).nn,
+      start = LocalDate.of(2007, 9, 1).nn,
+      title = "MSc, Computational Biology and Bioinformatics",
+      school = "ETH Zurich",
+      description = "",
+  )
+
+  val tuBsc = Education(
+      end = LocalDate.of(2007, 6, 1).nn,
+      start = LocalDate.of(2003, 9, 1).nn,
+      title = "BSc, Medical Informatics",
+      school = "Technical University Vienna",
+      description = "",
+  )
+
+  val vieBsc = Education(
+      end = LocalDate.of(2007, 6, 1).nn,
+      start = LocalDate.of(2003, 9, 1).nn,
+      title = "Diploma Student, Molecular Biology",
+      school = "Univerity of Vienna",
+      description = "",
+  )
+
+  val htl = Education(
+      end = LocalDate.of(2003, 7, 1).nn,
+      start = LocalDate.of(1998, 9, 1).nn,
+      title = "HTL, IT and Organization",
+      school = "HTL Pinkafeld",
+      description = "",
+  )
 
 
   val cv = CV("Georg Ofenbeck", "", "", 
   List(
     SwisscomHealth,
     SwisscomDNA
-  ), List())
+  ), List(
+    ethPhd,
+    ethPhd0,
+    ethMsc,
+    tuBsc,
+    vieBsc,
+    htl))
   
   println(s"Hello World, ${cv.toJson}")
 }

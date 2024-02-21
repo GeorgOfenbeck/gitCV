@@ -21,7 +21,10 @@ object gitCV extends RootModule with ScalaModule {
   // You can have arbitrary numbers of third-party dependencies
   def ivyDeps = Agg(
     ivy"ch.qos.logback:logback-classic:1.2.12",
-    ivy"dev.zio::zio-json:0.6.2"
+    ivy"dev.zio::zio-json:0.6.2",
+    ivy"org.eclipse.jgit:org.eclipse.jgit:6.8.0.202311291450-r",
+    //add the dependencies for jgit 
+    
   )
 
   override def mainClass = Some("com.ofenbeck.gitcv.main")
