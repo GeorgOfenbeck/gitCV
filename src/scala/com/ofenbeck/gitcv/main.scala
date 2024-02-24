@@ -180,7 +180,7 @@ object Main extends App {
 
     Files.walk(directory.toPath())
       .sorted(java.util.Comparator.reverseOrder())
-      .forEach(file => Files.delete(file))
+      .forEach(file => if(file != directory.toPath) Files.delete(file))
 
     Files.createDirectories(directory.toPath())
   } else {

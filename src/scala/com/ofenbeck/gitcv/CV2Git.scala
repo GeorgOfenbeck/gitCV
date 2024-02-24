@@ -7,8 +7,14 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import com.ofenbeck.gitcv.CV
 import com.ofenbeck.gitcv.Main.cv
 
-    import scala.language.unsafeNulls
-    import zio.json.EncoderOps
+import scala.language.unsafeNulls
+import zio.json.EncoderOps
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.util.TimeZone
+import java.time.Instant
+import java.util.UUID
+import java.nio.file.Files
 
 class CV2Git {}
 
@@ -31,13 +37,34 @@ object CV2Git {
     println(path)
   }
 
+  def createCommiter(date: LocalDate) = {
+    import org.eclipse.jgit.lib.PersonIdent;
+    val commitTime: Instant = date.atStartOfDay().toInstant(ZoneOffset.UTC)
+    val committer = new PersonIdent("Georg Ofenbeck", "georg@ofenbeck.com")
+    val committerWithTime = new PersonIdent(committer, commitTime)
+    committerWithTime
+  }
+
   def branchEducation(cv: CV, git: Git, path: String): Unit = {
     import scala.language.unsafeNulls
     val branch = "Education"
     git.branchCreate().setName(branch).call()
-    git.checkout().setName(branch).call()
+    git.checkout().setName(branch).call() // checkout the branch Education
+
+    val eduFile = new File(path + "/edu.json")
+    eduFile.createNewFile()
+
+    git.add().addFilepattern(path + "edu.json").call()
+    git.commit().setMessage("Initial commit edu").call()
+
     val education = cv.education
-    for (e <- education) {
+
+    for (e <- education.sortBy(_.start)) {
+
+      git.checkout().setName(branch).call() // checkout the branch Education
+      val subBranch = e.title.toString().replace(" ", "_")//.replace(",", "_")
+      git.branchCreate().setName(subBranch).call()
+      git.checkout().setName(subBranch).call()
       val educationFile = new File(
         path + "/education_" + e.school + ".json"
       )
@@ -51,12 +78,17 @@ object CV2Git {
           path + "/education_" + e.school + ".json"
         )
         .call()
-      val commitmsg: String = """${e.title}
-      
-      ${e.description}
-      """
+      val commitmsg: String = s"""${e.title}
+      | 
+      |${e.description}""".stripMargin
 
-      git.commit().setMessage(commitmsg).call()
+      git
+        .commit()
+        .setMessage(commitmsg)
+        .setCommitter(createCommiter(e.start))
+        .setAuthor(createCommiter(e.start))
+        .call()
+
     }
   }
 
