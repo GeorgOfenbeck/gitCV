@@ -15,6 +15,7 @@ import java.util.TimeZone
 import java.time.Instant
 import java.util.UUID
 import java.nio.file.Files
+import com.ofenbeck.gitcv.CVItem
 
 class CV2Git {}
 
@@ -27,12 +28,22 @@ object CV2Git {
 
     import java.nio.file.{Files, Paths}
     val git = Git.init().setDirectory(new File(path)).call()
-    git.commit().setMessage("Initial commit").call()
-    git.branchCreate().setName("cv").call()
-    Files.write(Paths.get(cvFile.getAbsolutePath), cv.toJson.getBytes)
-    git.add().addFilepattern(path + "cv.json").call()
-    git.commit().setMessage("Initial commit").call()
-    branchEducation(cv, git, path)
+
+    git
+      .commit()
+      .setMessage("Initial commit")
+      .setCommitter(createCommiter(cv.birthdate))
+      .setAuthor(createCommiter(cv.birthdate))
+      .call()
+    createBranchWithInitCommit(cv.birthdate,git, path, "cv")
+
+    // git.commit().setMessage("Initial commit").call()
+    // git.branchCreate().setName("cv").call()
+    // Files.write(Paths.get(cvFile.getAbsolutePath), cv.toJson.getBytes)
+    // git.add().addFilepattern(path + "cv.json").call()
+    // git.commit().setMessage("Initial commit").call()
+    branchCVItems(cv.birthdate, cv.workExperince, "Work", git, path)
+    branchCVItems(cv.birthdate, cv.education, "Education", git, path)
     // git.push().call()
     println(path)
   }
@@ -45,51 +56,69 @@ object CV2Git {
     committerWithTime
   }
 
-  def branchEducation(cv: CV, git: Git, path: String): Unit = {
+  def createBranchWithInitCommit(commitDate: LocalDate,
+      git: Git,
+      path: String,
+      branchName: String
+  ): Unit = {
+    git.branchCreate().setName(branchName).call()
+    git.checkout().setName(branchName).call()
+    val cvFile = new File(s"$path/$branchName.json")
+    cvFile.createNewFile()
+    git.add().addFilepattern(s"$path/$branchName.json").call()
+    git
+      .commit()
+      .setMessage("Initial commit")
+      .setCommitter(createCommiter(cv.birthdate))
+      .setAuthor(createCommiter(cv.birthdate))
+      .call()
+  }
+
+  def branchCVItems(
+      branchdate: LocalDate,
+      cvitems: List[CVItem],
+      branch: String,
+      git: Git,
+      path: String
+  ): Unit = {
     import scala.language.unsafeNulls
-    val branch = "Education"
-    git.branchCreate().setName(branch).call()
-    git.checkout().setName(branch).call() // checkout the branch Education
-
-    val eduFile = new File(path + "/edu.json")
-    eduFile.createNewFile()
-
-    git.add().addFilepattern(path + "edu.json").call()
-    git.commit().setMessage("Initial commit edu").call()
-
-    val education = cv.education
-
-    for (e <- education.sortBy(_.start)) {
-
-      git.checkout().setName(branch).call() // checkout the branch Education
-      val subBranch = e.title.toString().replace(" ", "_")//.replace(",", "_")
-      git.branchCreate().setName(subBranch).call()
+    val origin = git.getRepository().getBranch()
+    createBranchWithInitCommit(branchdate ,git, path, branch)
+    val cronCVIems = cvitems.map(e => (e.start, e)).toMap ++ cvitems.map(e => (e.end, e)).toMap
+    
+    for ( (date, item) <- cronCVIems.toVector.sortBy(_._1)) {      
+      git.checkout().setName(branch).call()
+      val subBranch = item.title.toString().replace(" ", "_") // .replace(",", "_")
+      if(item.start == date) {
+        git.branchCreate().setName(subBranch).call()
+      }  
       git.checkout().setName(subBranch).call()
-      val educationFile = new File(
-        path + "/education_" + e.school + ".json"
-      )
-      educationFile.createNewFile()
+      val filename = s"$path/${branch}_${UUID.randomUUID()}.txt"
+      val changeFile = new File(filename)
+      changeFile.createNewFile()
 
       import java.nio.file.{Files, Paths}
-      Files.write(Paths.get(educationFile.getAbsolutePath), e.toJson.getBytes)
+      Files.write(Paths.get(changeFile.getAbsolutePath), "xxx".getBytes)
       git
         .add()
-        .addFilepattern(
-          path + "/education_" + e.school + ".json"
-        )
+        .addFilepattern(filename)
         .call()
-      val commitmsg: String = s"""${e.title}
+      val commitmsg: String = s"""${item.title}
       | 
-      |${e.description}""".stripMargin
+      |${item.description}""".stripMargin
 
       git
         .commit()
         .setMessage(commitmsg)
-        .setCommitter(createCommiter(e.start))
-        .setAuthor(createCommiter(e.start))
+        .setCommitter(createCommiter(date))
+        .setAuthor(createCommiter(date))
         .call()
-
+      git.checkout().setName(branch).call()
+      if (date == item.end) {
+        git.merge().include(git.getRepository().resolve(subBranch)).call()
+      }
     }
+    git.checkout().setName(origin).call()
   }
 
   // i want to create an empty git repository on a given path

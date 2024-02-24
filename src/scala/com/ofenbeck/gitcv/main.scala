@@ -116,7 +116,7 @@ object Main extends App {
       "I worked on the topic of appling generic programming techniques to challenges in metaprogramming in the context of high performance code generators."
   )
   val ethPhd0 = Education(
-    end = LocalDate.of(2011, 10, 1).nn,
+    end = LocalDate.of(2011, 9, 30).nn,
     start = LocalDate.of(2010, 8, 1).nn,
     title = "PhD student, Computer Science",
     school = "ETH Zurich",
@@ -140,8 +140,8 @@ object Main extends App {
   )
 
   val vieBsc = Education(
-    end = LocalDate.of(2007, 6, 1).nn,
-    start = LocalDate.of(2003, 9, 1).nn,
+    end = LocalDate.of(2007, 5, 30).nn,
+    start = LocalDate.of(2003, 9, 2).nn,
     title = "Diploma Student, Molecular Biology",
     school = "Univerity of Vienna",
     description = ""
@@ -157,8 +157,9 @@ object Main extends App {
 
   val cv = CV(
     "Georg Ofenbeck",
+    "",  
     "",
-    "",
+    LocalDate.of(1984, 6, 12).nn,
     List(
       SwisscomHealth,
       SwisscomDNA
