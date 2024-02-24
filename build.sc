@@ -27,7 +27,7 @@ object gitCV extends RootModule with ScalaModule {
     
   )
 
-  override def mainClass = Some("com.ofenbeck.gitcv.main")
+  override def mainClass = Some("com.ofenbeck.gitcv.Main")
 
   // Additional Scala compiler options, e.g. to turn warnings into errors
   def scalacOptions: T[Seq[String]] = Seq(

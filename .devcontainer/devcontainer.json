@@ -64,6 +64,7 @@
                     "mutantdino.resourcemonitor",
                     "ms-azuretools.vscode-docker",
                     "scalameta.metals",
+                    "vintharas.learn-vim"
             ]
         }
     },

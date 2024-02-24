@@ -7,7 +7,7 @@ import java.time.LocalDate
 import com.ofenbeck.gitcv.Project
 import scala.com.ofenbeck.gitcv.CV2Git
 
-object main extends App {
+object Main extends App {
 
   def SwisscomHealth = {
 
@@ -169,9 +169,28 @@ object main extends App {
   println(s"Hello World, ${cv.toJson}")
 
   // path is a temporary directory in the temporary folder of the system
-  val path = java.nio.file.Files.createTempDirectory("temp").toString
+  import java.io.File
+  import java.nio.file.Files
+      import scala.language.unsafeNulls
+  val directoryPath = "/tmp/cv"
+  val directory = new File(directoryPath)
 
-  CV2Git.createGitRepositoryWithCV(path, cv)
+  if (directory.exists()) {
+    import java.nio.file.Files
+
+    Files.walk(directory.toPath())
+      .sorted(java.util.Comparator.reverseOrder())
+      .forEach(file => Files.delete(file))
+
+    Files.createDirectories(directory.toPath())
+  } else {
+    Files.createDirectories(directory.toPath())
+  }
+
+  CV2Git.createGitRepositoryWithCV(directoryPath, cv)
+  // val path = java.nio.file.Files.createTempDirectory("temp").toString
+
+  // CV2Git.createGitRepositoryWithCV(path, cv)
 
 //   CV2Git.createGitRepositoryWithCV("/tmp/gitcv", cv)
 }

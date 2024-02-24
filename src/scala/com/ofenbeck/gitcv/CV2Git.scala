@@ -5,7 +5,7 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import com.ofenbeck.gitcv.CV
-import com.ofenbeck.gitcv.main.cv
+import com.ofenbeck.gitcv.Main.cv
 
     import scala.language.unsafeNulls
     import zio.json.EncoderOps
@@ -26,19 +26,20 @@ object CV2Git {
     Files.write(Paths.get(cvFile.getAbsolutePath), cv.toJson.getBytes)
     git.add().addFilepattern(path + "cv.json").call()
     git.commit().setMessage("Initial commit").call()
-
+    branchEducation(cv, git, path)
     // git.push().call()
     println(path)
   }
 
-  def branchEducation(cv: CV, git: Git): Unit = {
+  def branchEducation(cv: CV, git: Git, path: String): Unit = {
     import scala.language.unsafeNulls
     val branch = "Education"
+    git.branchCreate().setName(branch).call()
     git.checkout().setName(branch).call()
     val education = cv.education
     for (e <- education) {
       val educationFile = new File(
-        git.getRepository.getDirectory.getParent + "/education/" + e.school + ".json"
+        path + "/education_" + e.school + ".json"
       )
       educationFile.createNewFile()
 
@@ -47,13 +48,14 @@ object CV2Git {
       git
         .add()
         .addFilepattern(
-          git.getRepository.getDirectory.getParent + "/education/" + e.school + ".json"
+          path + "/education_" + e.school + ".json"
         )
         .call()
       val commitmsg: String = """${e.title}
       
       ${e.description}
-      """ 
+      """
+
       git.commit().setMessage(commitmsg).call()
     }
   }
