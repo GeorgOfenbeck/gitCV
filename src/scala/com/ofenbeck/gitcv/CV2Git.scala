@@ -202,7 +202,7 @@ object CV2Git {
       createCVItemFile(homeBranch, git, path)
       commitCVItem(item, date, git)
 
-      delegateToBranch(item, date, git, path)
+      if(item.start == date) delegateToBranch(item, date, git, path)
 
       // go back to home branch and merge the subbranch
       git.checkout().setName(homeBranch).call()
