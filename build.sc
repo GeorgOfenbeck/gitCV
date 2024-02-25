@@ -27,6 +27,13 @@ object gitCV extends RootModule with ScalaModule {
     
   )
 
+  // Add the resources directory to the classpath
+  // Add (or replace) resource folders for the module to use
+  def resources = T.sources{
+    super.resources() ++ Seq(PathRef(millSourcePath / "log4j.xml"), PathRef(millSourcePath / "logback.xml"))
+  }
+
+  
   override def mainClass = Some("com.ofenbeck.gitcv.Main")
 
   // Additional Scala compiler options, e.g. to turn warnings into errors
