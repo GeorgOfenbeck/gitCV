@@ -41,7 +41,7 @@ object CV2Git {
       .call()
 
     createBranchWithInitCommit(cv.birthdate, git, path, "cv")
-
+    createBranchWithInitCommit(cv.birthdate, git, path, "technologies")
     delegateToBranch(cv, cv.birthdate, git, path)
     println(path)
   }
@@ -70,7 +70,8 @@ object CV2Git {
       commitDate: LocalDate,
       git: Git,
       path: String,
-      branchName: String
+      branchName: String,
+      withInitCommit: Boolean = true
   ): Unit = {
     import scala.language.unsafeNulls
     import scala.jdk.CollectionConverters._
@@ -78,7 +79,10 @@ object CV2Git {
     val branchNames = branches.asScala.map(_.getName).toSet
     val branchExists = branchNames.contains( s"refs/heads/$branchName")
     if (!branchExists) {
+      if (withInitCommit)
       createBranchWithInitCommit(commitDate, git, path, branchName)
+      else
+      git.branchCreate().setName(branchName).call()
     }
   }
 /**
@@ -196,7 +200,7 @@ object CV2Git {
 
       // create a branch for the item
       val subBranch = item.title.toString().replace(" ", "_")
-      if (item.start == date) git.branchCreate().setName(subBranch).call()
+      if (item.start == date) createBranchIfNotExists(date, git, path, subBranch, false)
       git.checkout().setName(subBranch).call()
 
       createCVItemFile(homeBranch, git, path)
@@ -243,7 +247,9 @@ object CV2Git {
         }
         case education: Education =>
           branchCVItems(date, education.publications, "publications", git, path)
-
+          git.merge().include(git.getRepository().resolve("publications")).call()
+          branchCVItems(date, education.teaching, "teaching", git, path)
+          git.merge().include(git.getRepository().resolve("teaching")).call()
         case project: Project =>
            branchCVItems(date, project.technologies, "technologies", git, path)
            git.merge().include(git.getRepository().resolve("technologies")).call()

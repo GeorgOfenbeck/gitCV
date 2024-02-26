@@ -9,19 +9,20 @@ import scala.com.ofenbeck.gitcv.CV2Git
 
 object Main extends App {
 
-  
   def SwisscomHealth = {
 
     val startDateTime = LocalDate.of(2022, 2, 1).nn
+    val endDateTime = LocalDate.of(2024, 10, 3).nn
 
     val medicalPracticeManagmentSoftware = Project(
-      start = startDateTime,
+      start = startDateTime.plusDays(1).nn,
+      end = endDateTime.minusDays(1).nn,
       title = "Medical Practice Managment Software",
       description =
         "I was responsible for improving scalability and maintainability issues. The software is used by ~1000 of medical practices in Switzerland.",
       technologies = List(
         Technology(
-          start = startDateTime, 
+          start = startDateTime,
           "Kubernetes, AKS, Cilium",
           "Improving scalability and maintainability issues"
         ),
@@ -34,7 +35,8 @@ object Main extends App {
     )
 
     val ragnarok = Project(
-      start = startDateTime,
+      start = startDateTime.plusDays(1).nn,
+      end = endDateTime.minusDays(1).nn,
       title = "Ragnarok",
       description =
         "Design and implementation of a cloud native serverless application for a medical data messing system.",
@@ -49,20 +51,16 @@ object Main extends App {
           "Azure managed storage Solutions",
           "Using managed blob, table and queue storage for the serverless application"
         ),
-        Technology(
-          start = startDateTime,
-          "Open Telemetry", "Implementation of distributed tracing")
+        Technology(start = startDateTime, "Open Telemetry", "Implementation of distributed tracing")
       )
     )
     val devOps = Project(
-      start = startDateTime,
+      start = startDateTime.plusDays(1).nn,
+      end = endDateTime.minusDays(1).nn,
       title = "DevOps",
-      description =
-        "Modernizing or creating new CI/CD pipelines for various products",
+      description = "Modernizing or creating new CI/CD pipelines for various products",
       technologies = List(
-        Technology(
-          start = startDateTime,
-          "Azure DevOps", "Migration from Jenkins to Azure DevOps"),
+        Technology(start = startDateTime, "Azure DevOps", "Migration from Jenkins to Azure DevOps"),
         Technology(
           start = startDateTime,
           "Terraform",
@@ -77,8 +75,8 @@ object Main extends App {
     )
 
     WorkExperince(
-      end = LocalDate.of(2024, 4, 1).nn,
-      start = LocalDate.of(2022, 2, 1).nn,
+      end = endDateTime,
+      start = startDateTime,
       title = "Senior Cloud Architect",
       company = "Swisscom Health",
       description =
@@ -93,16 +91,18 @@ object Main extends App {
 
   def SwisscomDNA = {
     val startDateTime = LocalDate.of(2018, 4, 3).nn
+    val endDateTime = LocalDate.of(2022, 1, 31).nn
     WorkExperince(
-      end = LocalDate.of(2022, 1, 31).nn,
-      start = startDateTime, 
+      end = endDateTime,
+      start = startDateTime,
       title = "Senior Software Engineer",
       company = "Data, Analytics und AI Department, Swisscom",
       description =
         "Implementation of a big data pipeline for machine learning. Implementation of a high throughput streaming application.",
       projects = List(
         Project(
-          start = startDateTime,
+          start = startDateTime.plusDays(1).nn,
+          end = endDateTime.minusDays(1).nn,
           title = "Big Data Pipeline for Machine Learning",
           description =
             "Implementing features and improving performance on the ETL data pipeline for ML applications. Reduced the Dev Cycle from larger than a working day to an hour.",
@@ -115,19 +115,154 @@ object Main extends App {
           )
         ),
         Project(
-          start = startDateTime,
+          start = startDateTime.plusDays(1).nn,
+          end = endDateTime.minusDays(1).nn,
           title = "High Throughput Streaming Application",
           description =
             "Implementation and operation of a real-time streaming application processing 6k msgs/s triggering interactions with customers.",
           technologies = List(
-            Technology(
-              start = startDateTime,
-              "Kafka, Akka Streaming, Flink", "")
+            Technology(start = startDateTime, "Kafka, Akka Streaming, Flink", "")
           )
         )
       )
     )
   }
+
+  val thesis = Publication(
+    start = LocalDate.of(2017, 4, 1).nn,
+    title = "Generic Programming Applied on the Time Dimension of Meta Programming",
+    description =
+      "How to apply generic programming techniques to challenges in metaprogramming in the context of high performance code generators.",
+    github = Some("https://github.com/GeorgOfenbeck/SpaceTime"),
+    thesis = Some(
+      "https://drive.google.com/file/d/0B9SH4AFkecQFMnkzWi1IRGprSFE/view?usp=sharing&resourcekey=0-LezbiD5TLA2KMTDOYifYvg"
+    ),
+    publication = "https://www.research-collection.ethz.ch/handle/20.500.11850/271073"
+  )
+
+  val randomTesting = Publication(
+    start = LocalDate.of(2016, 4, 1).nn,
+    title = "Random Testing for Compilers",
+    description =
+      "A tool for differential testing of compilers using random instances of a given intermediate representation.",
+    github = Some("https://github.com/GeorgOfenbeck/virtualization-lms-core/tree/buttom_up/src/test/test"),
+    thesis = None,
+    publication = "https://www.cs.purdue.edu/homes/rompf/papers/ofenbeck-scala16.pdf"
+  )
+
+  val genVector = Publication(
+    start = LocalDate.of(2015, 4, 1).nn,
+    title = "Generating Vector Instructions",
+    description =
+      "A demonstration on how to provide modular and extensible support for modern SIMD vector architectures in a DSL-based generator.",
+    github = None,
+    thesis = None,
+    publication = "https://spiral.ece.cmu.edu/pub-spiral/pubfile/paper_179.pdf"
+  )
+
+  val roofLine = Publication(
+    start = LocalDate.of(2014, 4, 1).nn,
+    title = "Applying the Roofline Model",
+    description = "We show how to produce roofline plots with measured data on recent generations of Intel platforms.",
+    github = Some("https://github.com/GeorgOfenbeck/perfplot"),
+    thesis = None,
+    publication = "https://spiral.ece.cmu.edu/pub-spiral/pubfile/ispass-2013_177.pdf"
+  )
+
+  val masterthesis = Publication(
+    start = LocalDate.of(2011, 4, 1).nn,
+    title = "Micro Transactions in the Linux Kernel",
+    description = "A study on how to enable micro transaction support in the kernel of an OS.",
+    github = Some("https://git.mpi-cbg.de/mosaic/software/black-box-optimization/libpcma/-/tree/master"),
+    thesis = None,
+    publication = "https://sbalzarini-lab.org//docs/Mueller2009b.pdf"
+  )
+
+  val fastcode17 = Teaching(
+    start = LocalDate.of(2017, 4, 1).nn,
+    title = "How To Write Fast Numerical Code",
+    description =
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+  )
+
+  val fastcode16 = Teaching(
+    start = LocalDate.of(2016, 4, 1).nn,
+    title = "How To Write Fast Numerical Code",
+    description =
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+  )
+
+  val fastcode14 = Teaching(
+    start = LocalDate.of(2014, 4, 1).nn,
+    title = "How To Write Fast Numerical Code",
+    description =
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+  )
+  val fastcode13 = Teaching(
+    start = LocalDate.of(2013, 4, 1).nn,
+    title = "How To Write Fast Numerical Code",
+    description =
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+  )
+  val fastcode12 = Teaching(
+    start = LocalDate.of(2012, 4, 1).nn,
+    title = "How To Write Fast Numerical Code",
+    description =
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+  )
+
+  val fastcode11 = Teaching(
+    start = LocalDate.of(2011, 4, 1).nn,
+    title = "How To Write Fast Numerical Code",
+    description =
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+  )
+
+  val introprogramming = Teaching(
+    start = LocalDate.of(2016, 4, 1).nn,
+    title = "Introduction to Programming",
+    description = ""
+  )
+
+  val compscienc2 = Teaching(
+    start = LocalDate.of(2015, 4, 1).nn,
+    title = "Computer Science 2",
+    description = ""
+  )
+  val parralelProgramming2013 = Teaching(
+    start = LocalDate.of(2013, 4, 1).nn,
+    title = "Parallel Programming",
+    description = ""
+  )
+  val foundationsCompScience2015 = Teaching(
+    start = LocalDate.of(2015, 4, 1).nn,
+    title = "Foundations of Computer Science",
+    description = ""
+  )
+
+  val foundationsCompScience2014 = Teaching(
+    start = LocalDate.of(2014, 4, 1).nn,
+    title = "Foundations of Computer Science",
+    description = ""
+  )
+
+  val parralelProgramming2015 = Teaching(
+    start = LocalDate.of(2015, 4, 1).nn,
+    title = "Parallel Programming",
+    description = ""
+  )
+
+  val compScience2012 = Teaching(
+    start = LocalDate.of(2012, 4, 1).nn,
+    title = "Computer Science",
+    description = ""
+  )
+
+  val compScience2013 = Teaching(
+    start = LocalDate.of(2013, 4, 1).nn,
+    title = "Computer Science",
+    description = ""
+  )
 
   val ethPhd = Education(
     end = LocalDate.of(2017, 5, 1).nn,
@@ -136,7 +271,22 @@ object Main extends App {
     school = "ETH Zurich",
     description =
       "I worked on the topic of appling generic programming techniques to challenges in metaprogramming in the context of high performance code generators.",
-      publications = List.empty,
+    publications = List(thesis, randomTesting, genVector, roofLine),
+    teaching = List(
+      fastcode17,
+      fastcode16,
+      fastcode14,
+      fastcode13,
+      fastcode12,
+      introprogramming,
+      compscienc2,
+      parralelProgramming2013,
+      foundationsCompScience2015,
+      foundationsCompScience2014,
+      parralelProgramming2015,
+      compScience2012,
+      compScience2013
+    )
   )
   val ethPhd0 = Education(
     end = LocalDate.of(2011, 9, 30).nn,
@@ -145,7 +295,8 @@ object Main extends App {
     school = "ETH Zurich",
     description =
       "Before switching topic, I worked my first year on enabling micro transaction support in the kernel of an OS",
-      publications = List.empty,
+    publications = List.empty,
+    teaching = List(fastcode11)
   )
   val ethMsc = Education(
     end = LocalDate.of(2009, 11, 1).nn,
@@ -153,7 +304,7 @@ object Main extends App {
     title = "MSc, Computational Biology and Bioinformatics",
     school = "ETH Zurich",
     description = "",
-    publications = List.empty,
+    publications = List(masterthesis)
   )
 
   val tuBsc = Education(
@@ -161,8 +312,8 @@ object Main extends App {
     start = LocalDate.of(2003, 9, 1).nn,
     title = "BSc, Medical Informatics",
     school = "Technical University Vienna",
-    description = "", 
-    publications = List.empty,
+    description = "",
+    publications = List.empty
   )
 
   val vieBsc = Education(
@@ -185,7 +336,7 @@ object Main extends App {
 
   val cv = CV(
     "Georg Ofenbeck",
-    "",  
+    "",
     "",
     LocalDate.of(1984, 6, 12).nn,
     List(
@@ -200,16 +351,17 @@ object Main extends App {
   // path is a temporary directory in the temporary folder of the system
   import java.io.File
   import java.nio.file.Files
-      import scala.language.unsafeNulls
+  import scala.language.unsafeNulls
   val directoryPath = "/tmp/cv"
   val directory = new File(directoryPath)
 
   if (directory.exists()) {
     import java.nio.file.Files
 
-    Files.walk(directory.toPath())
+    Files
+      .walk(directory.toPath())
       .sorted(java.util.Comparator.reverseOrder())
-      .forEach(file => if(file != directory.toPath) Files.delete(file))
+      .forEach(file => if (file != directory.toPath) Files.delete(file))
 
     Files.createDirectories(directory.toPath())
   } else {
@@ -223,23 +375,4 @@ object Main extends App {
 
 //   CV2Git.createGitRepositoryWithCV("/tmp/gitcv", cv)
 
-
-  val xx = Publication(
-    start = LocalDate.of(2022, 1, 1).nn,
-    title = "title",
-    description = "description",
-    github = None,
-    thesis = None,
-    publication = "publication"
-  )
-   
-
-  def test(x: CVItem): Unit={
-    x match {
-      case x: WorkExperince => println("WorkExperince")
-      case x: Publication => println(x.publication)
-      case x: Education => println("Education")
-    }
-  }
-  test(xx)
 }
