@@ -3,7 +3,8 @@
 {
     "name": "gitCVDevContainer",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    //"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "Dockerfile": "Dockerfile",
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},
     "features": {
@@ -65,8 +66,8 @@
                     "ms-azuretools.vscode-docker",
                     "scalameta.metals",
                     "vintharas.learn-vim",
-                    "mhutchie.git-graph"
-
+                    "mhutchie.git-graph",
+                    "James-Yu.latex-workshop"
             ]
         }
     },
