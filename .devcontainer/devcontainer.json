@@ -4,7 +4,9 @@
     "name": "gitCVDevContainer",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     //"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-    "Dockerfile": "Dockerfile",
+    // Remove the "Dockerfile" property
+	"build": { "dockerfile": "Dockerfile" },
+    // "Dockerfile": "Dockerfile", //using a custom Dockerfile cause latex is huge and I don't want to install it every time
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},
     "features": {
