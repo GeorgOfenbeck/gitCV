@@ -58,7 +58,7 @@
             "source=${localEnv:HOME}/.ssh/,target=/home/vscode/.ssh/,type=bind,consistency=cached",
         ],
         // Open the sub-folder with the source code
-        //"workspaceMount": "source=Omg,target=/workspace,type=volume",
+        "workspaceMount": "source=GitCVVolumne,target=/workspace,type=volume",
         // "workspaceFolder": "/workspace",
         "customizations": {
             "vscode": {
