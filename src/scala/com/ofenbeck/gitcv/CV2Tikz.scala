@@ -20,34 +20,45 @@ import com.ofenbeck.gitcv.CVItemWithEnd
 import com.ofenbeck.gitcv.WorkExperince
 import com.ofenbeck.gitcv.Education
 import com.ofenbeck.gitcv.Project
+import scala.com.ofenbeck.gitcv.TikzBranchConfig.branchMap
 
 object CV2Tikz {
 
- 
-
+  // |\lipsum[1]
   def craeteTex(cv: CV): String = {
     val headers =
       """\documentclass{article}
         |\usepackage{tikz}
         |\usepackage{xcolor}
-        |\usetikzlibrary{shapes,arrows}
+        |\usetikzlibrary{shapes,arrows,backgrounds,positioning}
         |\usetikzlibrary{calc}
+        |\usepackage{lipsum}
         |\usepackage[dvipsnames]{xcolor}
         |\usepackage{listings}
         |\begin{document}
-        |\begin{tikzpicture}
+        |\begin{figure}
+        |\centering
+        |\resizebox{\columnwidth}{!}{%
+        |\begin{tikzpicture}[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]
         |\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
         |\tikzstyle{every path}=[draw]  
         |\tikzstyle{branch}=[draw,rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
+        |
+        |\draw (0,0) -- (1,1);
+        |\node[commit] (root) at (0,0) {};"
+        |\draw[help lines] (-5,0) grid (10,-10);
         |""".stripMargin
 
     val tail = """
-  \end{tikzpicture}\end{document}\n"""
+        |\end{tikzpicture}%
+        | }
+        |\end{figure}
+        |\end{document}\n""".stripMargin
 
-    val graph = delegateToBranch(cv, LocalDate.now())
+    val (graph, y) = delegateToBranch(cv, LocalDate.now(), TikzBranchConfig.branchMap, -3.0, "root")
     headers +
       createBranches() +
-      // graph +
+      graph +
       tail
 
   }
@@ -68,18 +79,21 @@ object CV2Tikz {
     */
   def delegateToBranch(
       item: CVItem,
-      date: LocalDate
-  ): String = {
-    val graph: String = item match {
+      date: LocalDate,
+      branchMap: Map[String, TikzBranch],
+      yOffset: Double,
+      lastNode: String
+  ): (String, String) = {
+    val (graph, prevNode): (String, String) = item match {
       case cv: CV => {
-        branchCVItems(date, cv.education, "education")
-        branchCVItems(date, cv.workExperince, "workExperince")
+        // branchCVItems(date, cv.education, TikzBranchConfig.education)
+        branchCVItems(date, cv.workExperince, TikzBranchConfig.workExperince, yOffset, lastNode)
       }
 
-      // case work: WorkExperince => {
-      //   branchCVItems(date, work.projects, "projects", git, path)
-      //   git.merge().include(git.getRepository().resolve("projects")).call()
-      // }
+      case work: WorkExperince => {
+         branchCVItems(date, work.projects, TikzBranchConfig.projects, yOffset, lastNode) 
+    //     git.merge().include(git.getRepository().resolve("projects")).call()
+      }
       // case education: Education =>
       //   branchCVItems(date, education.publications, "publications", git, path)
       //   git.merge().include(git.getRepository().resolve("publications")).call()
@@ -88,10 +102,10 @@ object CV2Tikz {
       // case project: Project =>
       //   branchCVItems(date, project.technologies, "technologies", git, path)
       //   git.merge().include(git.getRepository().resolve("technologies")).call()
-      case _ => ""
+      case _ => ("", lastNode)
 
     }
-    graph
+    (graph, prevNode)
   }
 
   /** sortCVItemsByDate sorts the CVItems of a CV by date
@@ -109,13 +123,15 @@ object CV2Tikz {
           case _ => acc :+ (e -> start)
         }
       })
-    return cronCVIems.sortBy(_._2)
+    return cronCVIems.sortBy(_._2).reverse
   }
   def branchCVItems(
       branchdate: LocalDate,
       cvitems: List[CVItem],
-      homeBranch: String
-  ): String = {
+      homeBranch: TikzBranch,
+      yOffset: Double,
+      lastNode: String
+  ): (String, String) = {
     import scala.language.unsafeNulls
 
     val sorted = sortCVItemsByDate(cvitems)
@@ -123,7 +139,8 @@ object CV2Tikz {
     val sb = new StringBuilder()
     val node_pos = 0
     val message_pos = 0
-    var ypos = 0.0
+    var ypos = yOffset
+    var prevNode: String = lastNode
     for ((item, date) <- sorted) {
       // go to home branch
 
@@ -137,18 +154,37 @@ object CV2Tikz {
       //     }
       //   case _: CVItem =>
       // }
-      val hash = item.hashCode()
-      val node = s"\\node[commit] ($hash) at (${0.5 * node_pos},$ypos) {};\n"
-      val text = s"""
-        |\\node[right,xshift=${message_pos * 0.5}, text width=10cm] (label_$hash) at ($hash.east) 
-        |{${item.title}
-        |${item.description}};"
+
+      val hash: String = item.hashCode().toString()
+
+      // val node = s"\\node[commit, below=1cm of ${lastNode}] ($hash) at (${0.5 * node_pos},$ypos) {};\n"
+      val allinpos = 
+        if (prevNode == "root") s"below right =1cm and 0cm of ${prevNode}"
+        else s"below = 0.5cm of ${prevNode}.south" 
+
+      val text =
+          s"""
+        |\\node[ text width=10cm, $allinpos ] (label_$hash)  
+        |{${item.title}\\\\
+        |${item.description}};\n"
         """.stripMargin
-      sb.append(node)
+
+      val node = s"\\node[commit, left=0.1cm of label_$hash] ($hash)  {};\n"
+      val path = s"\\draw[-,${homeBranch.color}, line width=2pt] ($hash -| ${homeBranch.xshift} ,0) -- ($hash);\n"
+      val nodeAtBranch = s"\\node[commit] (${hash}branch) at  ($hash -| ${homeBranch.xshift},0) {};\n"
+
       sb.append(text)
-      ypos = ypos + 3
-    }
-    return sb.toString()
+      sb.append(node)
+      sb.append(path)
+      sb.append(nodeAtBranch)
+      sb.append(s"\\draw[-,${homeBranch.color}, line width=2pt] (label_$hash.west) -- ($prevNode.west);\n")
+      prevNode = s"label_$hash"
+
+       val (subgraph, subLast) =delegateToBranch(item, date, branchMap, yOffset, prevNode)
+       sb.append(subgraph)
+       prevNode = subLast
+     }
+    return (sb.toString(), prevNode)
   }
   /*
   def build(line: String): Boolean = {

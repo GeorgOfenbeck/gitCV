@@ -24,7 +24,7 @@ import com.ofenbeck.gitcv.Project
 class TikzBranch(val name: String, val color: String,  val xshift: Double,val yOffset: Double) {
   def branch: String = {
     s"\\node[branch, fill=$color, rotate=90] ($name) at ($xshift,$yOffset) {\\texttt{$name}};\n" +
-      s"\\draw[->, $color] ($name) -- ($name.south |- 0,${-15});\n"
+      s"\\draw[-, $color, line width=2pt] ($name) -- ($name.south |- 0,${-15});\n"
   }
 }
 
@@ -36,7 +36,7 @@ object TikzBranchConfig {
   val projectsColor = "orange"
   val technologiesColor = "purple"
 
-  val branchXPos = 0.0
+  val branchXPos = -3.0
   val branchYPos = 0.0
 
   val titleYOffset = 0.5
