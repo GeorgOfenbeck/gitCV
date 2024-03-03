@@ -24,7 +24,7 @@ import com.ofenbeck.gitcv.Project
 class TikzBranch(val name: String, val color: String,  val xshift: Double,val yOffset: Double) {
   def branch: String = {
     s"\\node[branch, fill=$color, rotate=90] ($name) at ($xshift,$yOffset) {\\texttt{$name}};\n" +
-      s"\\draw[-, $color, line width=2pt] ($name) -- ($name.south |- 0,${-15});\n"
+      s"\\draw[-, $color, line width=2pt] ($name) -- ($name |- 0,${-19});\n"
   }
 }
 
@@ -36,7 +36,7 @@ object TikzBranchConfig {
   val projectsColor = "orange"
   val technologiesColor = "purple"
 
-  val branchXPos = -3.0
+  val branchXPos = -1.5
   val branchYPos = 0.0
 
   val titleYOffset = 0.5
@@ -44,9 +44,9 @@ object TikzBranchConfig {
 
   val branches = Vector(
     ("Work Experince", workExperinceColor),
-    ("Education", educationColor),
-    ("Publications", publicationsColor),
-    ("Teaching", teachingColor),
+    // ("Education", educationColor),
+    // ("Publications", publicationsColor),
+    // ("Teaching", teachingColor),
     ("Projects", projectsColor),
     ("Technologies", technologiesColor)
   )
@@ -57,10 +57,10 @@ object TikzBranchConfig {
 
   val branchMap = branchesWithOffset.map(b => (b.name, b)).toMap
 
-  val education = branchMap.get("Education").get
+//   val education = branchMap.get("Education").get
   val workExperince = branchMap.get("Work Experince").get
-  val publications = branchMap.get("Publications").get
-  val teaching = branchMap.get("Teaching").get
+//   val publications = branchMap.get("Publications").get
+//   val teaching = branchMap.get("Teaching").get
   val projects = branchMap.get("Projects").get
   val technologies = branchMap.get("Technologies").get
 
