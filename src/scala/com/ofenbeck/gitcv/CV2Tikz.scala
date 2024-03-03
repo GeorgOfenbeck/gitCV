@@ -21,6 +21,7 @@ import com.ofenbeck.gitcv.WorkExperince
 import com.ofenbeck.gitcv.Education
 import com.ofenbeck.gitcv.Project
 import scala.com.ofenbeck.gitcv.TikzBranchConfig.branchMap
+import com.ofenbeck.gitcv.Technology
 
 object CV2Tikz {
 
@@ -35,10 +36,17 @@ object CV2Tikz {
         |\usepackage{lipsum}
         |\usepackage[dvipsnames]{xcolor}
         |\usepackage{listings}
+        |\usepackage{geometry}
+        |\geometry{
+        |left=1cm,
+        |right=1cm,
+        |top=1cm,
+        |bottom=0cm,
+        |includehead,
+        |includefoot
+        |}
         |\begin{document}
-        |\begin{figure}
-        |\centering
-        |\resizebox{\columnwidth}{!}{%
+        |\lipsum[1]
         |\begin{tikzpicture}[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]
         |\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
         |\tikzstyle{every path}=[draw]  
@@ -47,11 +55,10 @@ object CV2Tikz {
         |\draw (0,0) -- (1,1);
         |\node[commit] (root) at (0,0) {};"
         |""".stripMargin
-        //|\draw[help lines] (-5,0) grid (10,-10);
+        // |\draw[help lines] (-5,0) grid (10,-10);
+        // |\resizebox{\columnwidth}{!}{%
     val tail = """
         |\end{tikzpicture}%
-        | }
-        |\end{figure}
         |\end{document}\n""".stripMargin
 
     val (graph, y) = delegateToBranch(cv, LocalDate.now(), TikzBranchConfig.branchMap, -3.0, "root")
@@ -90,8 +97,8 @@ object CV2Tikz {
       }
 
       case work: WorkExperince => {
-         branchCVItems(date, work.projects, TikzBranchConfig.projects, yOffset, lastNode) 
-    //     git.merge().include(git.getRepository().resolve("projects")).call()
+        branchCVItems(date, work.projects, TikzBranchConfig.projects, yOffset, lastNode)
+        //     git.merge().include(git.getRepository().resolve("projects")).call()
       }
       // case education: Education =>
       //   branchCVItems(date, education.publications, "publications", git, path)
@@ -99,7 +106,7 @@ object CV2Tikz {
       //   branchCVItems(date, education.teaching, "teaching", git, path)
       //   git.merge().include(git.getRepository().resolve("teaching")).call()
       case project: Project =>
-         branchCVItems(date, project.technologies, TikzBranchConfig.technologies, yOffset, lastNode) 
+        branchCVItems(date, project.technologies, TikzBranchConfig.technologies, yOffset, lastNode)
       case _ => ("", lastNode)
 
     }
@@ -153,24 +160,27 @@ object CV2Tikz {
       //   case _: CVItem =>
       // }
 
-      val hash: String = item.hashCode().toString().substring(1,8)
+      val hash: String = item.hashCode().toString().substring(1, 8)
 
       // val node = s"\\node[commit, below=1cm of ${lastNode}] ($hash) at (${0.5 * node_pos},$ypos) {};\n"
-      val allinpos = 
+      val allinpos =
         if (prevNode == "root") s"below right =1cm and 0cm of ${prevNode}"
-        else s"below = 0.2cm of ${prevNode}.south" 
+        else s"below = 0.2cm of ${prevNode}.south"
 
-      val text =
+      val text = item match {
+        case tech: Technology =>
+          s"""|\\node[ text width=15cm, $allinpos ] (label_$hash)  
+              |{${item.title}};""".stripMargin
+        case _ =>
           s"""
-        |\\node[ text width=10cm, $allinpos ] (label_$hash)  
-        |{${item.title}\\\\
-        |${item.description}};\n"
-        """.stripMargin
-
+            |\\node[ text width=15cm, $allinpos ] (label_$hash)  
+            |{${item.title}\\\\
+            |${item.description}};\n"
+            """.stripMargin
+      }
       val node = s"\\node[commit, left=0.1cm of label_$hash] ($hash)  {};\n"
       val path = s"\\draw[-,${homeBranch.color}, line width=2pt] ($hash -| ${homeBranch.xshift} ,0) -- ($hash);\n"
       val nodeAtBranch = s"\\node[commit] (${hash}branch) at  ($hash -| ${homeBranch.xshift},0) {};\n"
-
 
       sb.append(text)
       sb.append(node)
@@ -179,24 +189,28 @@ object CV2Tikz {
 
       item match {
         case withend: WorkExperince =>
-            sb.append(s"\\node[left = 0cm of ${hash}branch] (datestart$hash) {${withend.`end`}};\n")
+          import java.time.format.DateTimeFormatter
+
+          sb.append(
+            s"\\node[left = 0cm of ${hash}branch] (datestart$hash) {${withend.`end`.format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
+          )
         case _ =>
       }
 
       // sb.append(s"\\draw[-,${homeBranch.color}, line width=2pt] (label_$hash.west) -- ($prevNode.west);\n")
       prevNode = s"label_$hash"
 
-       val (subgraph, subLast) =delegateToBranch(item, date, branchMap, yOffset, prevNode)
-       sb.append(subgraph)
-       prevNode = subLast
+      val (subgraph, subLast) = delegateToBranch(item, date, branchMap, yOffset, prevNode)
+      sb.append(subgraph)
+      prevNode = subLast
 
-       item match {
-        case withend: WorkExperince =>//CVItemWithEnd =>
-            sb.append(s"\\node[commit] (dateend${hash}) at  ($$(${prevNode} -|  ${hash}branch)$$) {};\n")
-            sb.append(s"\\draw[-,${homeBranch.color}, line width=2pt] (dateend$hash) to[out=90,in=-90] ($hash);\n")
+      item match {
+        case withend: WorkExperince => // CVItemWithEnd =>
+          sb.append(s"\\node[commit] (dateend${hash}) at  ($$(${prevNode} -|  ${hash}branch)$$) {};\n")
+          sb.append(s"\\draw[-,${homeBranch.color}, line width=2pt] (dateend$hash) to[out=90,in=-90] ($hash);\n")
         case _ =>
-       }
-     }
+      }
+    }
     return (sb.toString(), prevNode)
   }
   /*
