@@ -6,6 +6,7 @@ import com.ofenbeck.gitcv.WorkExperince
 import java.time.LocalDate
 import com.ofenbeck.gitcv.Project
 import scala.com.ofenbeck.gitcv.CV2Git
+import scala.com.ofenbeck.gitcv.CV2Tikz
 
 object Main extends App {
 
@@ -80,7 +81,7 @@ object Main extends App {
       title = "Senior Cloud Architect",
       company = "Swisscom Health",
       description =
-        "Implementation of a big data pipeline for machine learning. Implementation of a high throughput streaming application.",
+        "Various projects in the context of a medical practice managment software. Design and implementation of a cloud native serverless application for a medical data messing system. Modernizing or creating new CI/CD pipelines for various products.",
       projects = List(
         medicalPracticeManagmentSoftware,
         devOps,
@@ -346,7 +347,7 @@ object Main extends App {
     List(ethPhd, ethPhd0, ethMsc, tuBsc, vieBsc, htl)
   )
 
-  println(s"Hello World, ${cv.toJson}")
+ // println(s"Hello World, ${cv.toJson}")
 
   // path is a temporary directory in the temporary folder of the system
   import java.io.File
@@ -369,6 +370,10 @@ object Main extends App {
   }
 
   CV2Git.createGitRepositoryWithCV(directoryPath, cv)
+
+  val tex = new File( "./cv.tex")
+  val content = CV2Tikz.craeteTex(cv)
+  Files.write(tex.toPath(), content.getBytes())
   // val path = java.nio.file.Files.createTempDirectory("temp").toString
 
   // CV2Git.createGitRepositoryWithCV(path, cv)
