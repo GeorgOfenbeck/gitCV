@@ -1,4 +1,4 @@
-package scala.com.ofenbeck.gitcv
+package com.ofenbeck.gitcv
 
 import java.io.File
 import org.eclipse.jgit.api.Git
@@ -28,40 +28,13 @@ class TikzBranch(val name: String, val color: String,  val xshift: Double,val yO
   }
 }
 
-object TikzBranchConfig {
-  val educationColor = "blue"
-  val workExperinceColor = "green"
-  val publicationsColor = "red"
-  val teachingColor = "yellow"
-  val projectsColor = "orange"
-  val technologiesColor = "purple"
-
-  val branchXPos = -1.5
-  val branchYPos = 0.0
-
-  val titleYOffset = 0.5
-  val branchOffset = 0.5
-
-  val branches = Vector(
-    ("Work Experince", workExperinceColor),
-    // ("Education", educationColor),
-    // ("Publications", publicationsColor),
-    // ("Teaching", teachingColor),
-    ("Projects", projectsColor),
-    ("Technologies", technologiesColor)
-  )
-
+case class TikzBranchConfig(branchXPos: Double , branchYPos: Double, titleYOffset: Double, branchOffset: Double, branches: Vector[(String, String)]) 
+{
+ 
   val branchesWithOffset = branches.zipWithIndex.map { case ((name, color), index) =>
     new TikzBranch(name, color, branchXPos + index * branchOffset, branchYPos) // + index * titleYOffset)
   }
 
   val branchMap = branchesWithOffset.map(b => (b.name, b)).toMap
-
-//   val education = branchMap.get("Education").get
-  val workExperince = branchMap.get("Work Experince").get
-//   val publications = branchMap.get("Publications").get
-//   val teaching = branchMap.get("Teaching").get
-  val projects = branchMap.get("Projects").get
-  val technologies = branchMap.get("Technologies").get
 
 }

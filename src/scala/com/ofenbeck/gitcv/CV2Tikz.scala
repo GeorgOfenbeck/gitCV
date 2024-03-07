@@ -20,12 +20,20 @@ import com.ofenbeck.gitcv.CVItemWithEnd
 import com.ofenbeck.gitcv.WorkExperince
 import com.ofenbeck.gitcv.Education
 import com.ofenbeck.gitcv.Project
-import scala.com.ofenbeck.gitcv.TikzBranchConfig.branchMap
 import com.ofenbeck.gitcv.Technology
+import com.ofenbeck.gitcv.TikzBranchConfig
+import com.ofenbeck.gitcv.TikzBranch
 
-          import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter
 
 object CV2Tikz {
+
+  val workExperinceName = "Work Experince"
+  val educationName = "Education"
+  val projectsName = "Projects"
+  val technologiesName = "Technologies"
+  val publicationsName = "Publications"
+  val teachingName = "Teaching"
 
   val textBoxWidth = 16
   val xshift = 0.2
@@ -53,6 +61,10 @@ object CV2Tikz {
         |\begin{document}
         |\lipsum[1]
         |\begin{tikzpicture}[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]
+        |
+        |\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
+        |\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
+        |\definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
         |\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
         |\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=0pt]
         |\tikzstyle{every path}=[draw]  
@@ -67,18 +79,67 @@ object CV2Tikz {
         |\end{tikzpicture}%
         |\end{document}\n""".stripMargin
 
-    val (graph, y) = delegateToBranch(cv, LocalDate.now(), TikzBranchConfig.branchMap, 0.0, "root", None,1)
+    val (graph1, y) = delegateToBranch(cv, LocalDate.now(), workBranches().branchMap, 0.0, "root", None, 1)
+    val (graph2, y2) = delegateToBranch(cv, LocalDate.now(), educationBranches().branchMap, 0.0, "root", None, 1)
     headers +
-      createBranches() +
-      graph +
+      createBranches(workBranches()) +
+      graph1 +
+      createBranches(educationBranches()) +
+      graph2 +
       tail
 
   }
 
-  def createBranches(): String = {
-    val branches = TikzBranchConfig.branchesWithOffset
+  def workBranches(): TikzBranchConfig = {
+    val educationColor = "blue"
+    val workExperinceColor = "babyblue"
+    val publicationsColor = "red"
+    val teachingColor = "yellow"
+    val projectsColor = "green"
+    val technologiesColor = "beaublue"
+
+    val branchXPos = -1.5
+    val branchYPos = 0.0
+
+    val titleYOffset = 0.5
+    val branchOffset = 0.5
+
+    val branches = Vector(
+      (workExperinceName, workExperinceColor),
+      // ("Publications", publicationsColor),
+      // ("Teaching", teachingColor),
+      (projectsName, projectsColor),
+      (technologiesName, technologiesColor),
+      //(educationName, educationColor),
+    )
+    return TikzBranchConfig(branchXPos, branchYPos, titleYOffset, branchOffset, branches)
+  }
+
+  def educationBranches(): TikzBranchConfig = {
+    val educationColor = "blue"
+    val workExperinceColor = "babyblue"
+    val publicationsColor = "red"
+    val teachingColor = "yellow"
+    val projectsColor = "green"
+    val technologiesColor = "beaublue"
+
+    val branchXPos = -1.5
+    val branchYPos = 0.0
+
+    val titleYOffset = 0.5
+    val branchOffset = 0.5
+
+    val branches = Vector(
+      (educationName, educationColor),
+      (publicationsName, publicationsColor),
+      (teachingName, teachingColor)
+    )
+    return TikzBranchConfig(branchXPos, branchYPos, titleYOffset, branchOffset, branches)
+  }
+
+  def createBranches(branchconfig: TikzBranchConfig): String = {
     val sb = new StringBuilder()
-    for (branch <- branches) {
+    for (branch <- branchconfig.branchMap.values) {
       sb.append(branch.branch)
     }
     sb.toString()
@@ -96,25 +157,26 @@ object CV2Tikz {
       xOffset: Double,
       lastNode: String,
       parentNode: Option[String],
-      depth: Int,
+      depth: Int
   ): (String, String) = {
     val (graph, prevNode): (String, String) = item match {
       case cv: CV => {
         // branchCVItems(date, cv.education, TikzBranchConfig.education)
-        branchCVItems(date, cv.workExperince, TikzBranchConfig.workExperince, xOffset, lastNode, parentNode,depth)
+        branchCVItems(date, cv.workExperince, branchMap.get(workExperinceName).get, xOffset, lastNode, parentNode, depth, branchMap)
       }
 
       case work: WorkExperince => {
-        branchCVItems(date, work.projects, TikzBranchConfig.projects, xOffset, lastNode,parentNode,depth)
+        branchCVItems(date, work.projects, branchMap.get(workExperinceName).get, xOffset, lastNode, parentNode, depth, branchMap)
         //     git.merge().include(git.getRepository().resolve("projects")).call()
       }
-      // case education: Education =>
-      //   branchCVItems(date, education.publications, "publications", git, path)
+      case education: Education =>
+        branchCVItems(date, education.publications, branchMap.get(workExperinceName).get, xOffset, lastNode, parentNode, depth, branchMap)
+        //  branchCVItems(date, education.publications, "publications", git, path)
       //   git.merge().include(git.getRepository().resolve("publications")).call()
       //   branchCVItems(date, education.teaching, "teaching", git, path)
       //   git.merge().include(git.getRepository().resolve("teaching")).call()
       case project: Project =>
-        branchCVItems(date, project.technologies, TikzBranchConfig.technologies, xOffset, lastNode, parentNode,depth)
+        branchCVItems(date, project.technologies, branchMap.get(technologiesName).get, xOffset, lastNode, parentNode, depth, branchMap )
       case _ => ("", lastNode)
 
     }
@@ -130,7 +192,10 @@ object CV2Tikz {
     if (cvitems.isEmpty) return Vector.empty[(CVItem, LocalDate)]
 
     cvitems.head match {
-      case tech: Technology => cvitems.foldLeft(Vector{(tech, tech.start)})((acc, ele) => Vector(tech.copy(title = tech.title + ",  " + ele.title) -> tech.start))
+      case tech: Technology =>
+        cvitems.foldLeft(Vector { (tech, tech.start) })((acc, ele) =>
+          Vector(tech.copy(title = tech.title + ",  " + ele.title) -> tech.start)
+        )
       case _ =>
         val cronCVIems =
           cvitems.foldLeft(Vector.empty[(CVItem, LocalDate)])((acc, e) => {
@@ -152,10 +217,9 @@ object CV2Tikz {
       lastNode: String,
       parentNode: Option[String],
       depth: Int,
+      branchMap: Map[String, TikzBranch],
   ): (String, String) = {
     import scala.language.unsafeNulls
-
-
 
     val sorted = sortCVItemsByDate(cvitems)
 
@@ -168,16 +232,20 @@ object CV2Tikz {
       val hash: String = item.hashCode().toString().substring(1, 8)
       val allinpos =
         if (prevNode == "root") s"below right =1cm and 0cm of ${prevNode}"
-        //else s"below right = 0.2cm and ${-textBoxWidth/2.0 + xOffset}cm of ${prevNode}.south"
+        // else s"below right = 0.2cm and ${-textBoxWidth/2.0 + xOffset}cm of ${prevNode}.south"
         else s"below = 0.2cm of ${prevNode}.south"
 
       val text = item match {
         case tech: Technology =>
-          s"""|\\node[draw text width=${textBoxWidth-xOffset*depth}cm, $allinpos ${if(first) s", xshift=${xOffset}cm" else ""} ] (label_$hash)  
+          s"""|\\node[draw, text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
+               if (first) s", xshift=${xOffset}cm" else ""
+             } ] (label_$hash)  
               |{${item.title}};""".stripMargin
         case _ =>
           s"""
-            |\\node[draw, text width=${textBoxWidth-xOffset*depth}cm, $allinpos ${if(first) s", xshift=${xOffset}cm" else ""} ] (label_$hash)  
+            |\\node[draw, text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
+              if (first) s", xshift=${xOffset}cm" else ""
+            } ] (label_$hash)  
             |{${item.title}\\\\
             |${item.description}};\n"
             """.stripMargin
@@ -185,20 +253,19 @@ object CV2Tikz {
       first = false
       val node = s"\\node[commit, left=0.1cm of label_$hash] ($hash)  {};\n"
       val path = s"\\draw[-,${homeBranch.color}, line width=2pt] ($hash -| ${homeBranch.xshift} ,0) -- ($hash);\n"
-      val nodeAtBranchLabel = s"${hash}branch" 
+      val nodeAtBranchLabel = s"${hash}branch"
       val nodeAtBranch = s"\\node[commit] (${nodeAtBranchLabel}) at  ($hash -| ${homeBranch.xshift},0) {};\n"
-      
-      
+
       sb.append(text)
       sb.append(node)
       sb.append(path)
       sb.append(nodeAtBranch)
 
-
       // sb.append(s"\\node[commit] (${hash}blub) at (label_${hash}.south) {};\n)")
 
-      parentNode.map{ parent =>
-        val pathToParent = s"\\draw[-,${homeBranch.color}, line width=2pt] (${nodeAtBranchLabel}) to[out=90,in=-90] ($parent);\n"
+      parentNode.map { parent =>
+        val pathToParent =
+          s"\\draw[-,${homeBranch.color}, line width=2pt] (${nodeAtBranchLabel}) to[out=90,in=-90] ($parent);\n"
         sb.append(pathToParent)
       }
       item match {
@@ -211,27 +278,29 @@ object CV2Tikz {
 
       prevNode = s"label_$hash"
 
-      val (subgraph, subLast) = delegateToBranch(item, date, branchMap, xOffset+xshift, prevNode, Some(nodeAtBranchLabel),depth+1)
+      val (subgraph, subLast) =
+        delegateToBranch(item, date, branchMap, xOffset + xshift, prevNode, Some(nodeAtBranchLabel), depth + 1)
       sb.append(subgraph)
-
 
       prevNode = subLast
 
       item match {
         case withend: WorkExperince => // CVItemWithEnd =>
           sb.append(s"\\node[commit] (datestart${hash}branch) at  ($$(${prevNode} -|  ${hash}branch)$$) {};\n")
-          sb.append(s"\\draw[-,${homeBranch.color}, line width=2pt] (${hash}branch) to[out=250,in=90] (datestart${hash}branch);\n")
           sb.append(
-            s"\\node[left = 0cm of datestart${hash}branch] (datestart${hash}branch) {${withend.start.format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
+            s"\\draw[-,${homeBranch.color}, line width=2pt] (${hash}branch) to[out=250,in=90] (datestart${hash}branch);\n"
+          )
+          sb.append(
+            s"\\node[left = 0cm of datestart${hash}branch] (datestart${hash}branch) {${withend.start
+                .format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
           )
         case _ =>
       }
 
-
     }
-    val invName = "invis" + prevNode 
+    val invName = "invis" + prevNode
     sb.append(s"\\node[inv, xshift=-${xOffset}cm] (${invName}) at (${prevNode}.south) {};\n")
-     
+
     return (sb.toString(), invName)
   }
 }
