@@ -25,6 +25,8 @@ import com.ofenbeck.gitcv.TikzBranchConfig
 import com.ofenbeck.gitcv.TikzBranch
 
 import java.time.format.DateTimeFormatter
+import com.ofenbeck.gitcv.Teaching
+import zio.Config.Bool
 
 object CV2Tikz {
 
@@ -34,6 +36,17 @@ object CV2Tikz {
   val technologiesName = "Technologies"
   val publicationsName = "Publications"
   val teachingName = "Teaching"
+  val socialName = "Social"
+
+  val educationColor = "blue"
+  val workExperinceColor = "babyblue"
+  val publicationsColor = "red"
+  val teachingColor = "yellow"
+  val projectsColor = "green"
+  val technologiesColor = "beaublue"
+  val socialColor = "orange"
+
+  val drawboxes = "draw, "
 
   val textBoxWidth = 16
   val xshift = 0.2
@@ -60,49 +73,52 @@ object CV2Tikz {
         |}
         |\begin{document}
         |\lipsum[1]
+        |""".stripMargin
+        // |\draw[help lines] (-5,0) grid (10,-10);
+        // |\resizebox{\columnwidth}{!}{%
+    val tail = """
+        |\end{document}\n""".stripMargin
+
+    val (graph1, y) = delegateToBranch(cv, LocalDate.now(), workBranches().branchMap, 0.0, "root", None, 1)
+    val (graph2, y2) = delegateToBranch(cv, LocalDate.now(), educationBranches().branchMap, 0.0, "root", None, 1)
+    val workPicture: String = insertTikzSurrounding(createBranches(workBranches()) + graph1)
+
+    val educationPicture: String = insertTikzSurrounding(createBranches(educationBranches()) + graph2)
+
+    s"""
+        |$headers
+        |$workPicture
+        |$educationPicture 
+        |$tail """.stripMargin
+  }
+
+  def insertTikzSurrounding(content: String): String = {
+    """
         |\begin{tikzpicture}[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]
         |
         |\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
         |\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
         |\definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
         |\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
-        |\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=0pt]
+        |\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=2pt]
         |\tikzstyle{every path}=[draw]  
         |\tikzstyle{branch}=[draw,rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
         |
         |\draw (0,0) -- (1,1);
         |\node[commit] (root) at (0,0) {};"
-        |""".stripMargin
-        // |\draw[help lines] (-5,0) grid (10,-10);
-        // |\resizebox{\columnwidth}{!}{%
-    val tail = """
-        |\end{tikzpicture}%
-        |\end{document}\n""".stripMargin
-
-    val (graph1, y) = delegateToBranch(cv, LocalDate.now(), workBranches().branchMap, 0.0, "root", None, 1)
-    val (graph2, y2) = delegateToBranch(cv, LocalDate.now(), educationBranches().branchMap, 0.0, "root", None, 1)
-    headers +
-      createBranches(workBranches()) +
-      graph1 +
-      createBranches(educationBranches()) +
-      graph2 +
-      tail
-
+        """.stripMargin + content + """
+        |\end{tikzpicture}%""".stripMargin
   }
 
   def workBranches(): TikzBranchConfig = {
-    val educationColor = "blue"
-    val workExperinceColor = "babyblue"
-    val publicationsColor = "red"
-    val teachingColor = "yellow"
-    val projectsColor = "green"
-    val technologiesColor = "beaublue"
 
-    val branchXPos = -1.5
+    val branchXPos = -2
     val branchYPos = 0.0
 
     val titleYOffset = 0.5
     val branchOffset = 0.5
+
+    val branchLength = -16.5
 
     val branches = Vector(
       (workExperinceName, workExperinceColor),
@@ -110,31 +126,28 @@ object CV2Tikz {
       // ("Teaching", teachingColor),
       (projectsName, projectsColor),
       (technologiesName, technologiesColor),
-      //(educationName, educationColor),
+      (socialName, socialColor),
+      // (educationName, educationColor),
     )
-    return TikzBranchConfig(branchXPos, branchYPos, titleYOffset, branchOffset, branches)
+    return TikzBranchConfig(branchXPos, branchYPos, titleYOffset, branchOffset, branches, branchLength)
   }
 
   def educationBranches(): TikzBranchConfig = {
-    val educationColor = "blue"
-    val workExperinceColor = "babyblue"
-    val publicationsColor = "red"
-    val teachingColor = "yellow"
-    val projectsColor = "green"
-    val technologiesColor = "beaublue"
-
-    val branchXPos = -1.5
+    val branchXPos = -2
     val branchYPos = 0.0
 
     val titleYOffset = 0.5
     val branchOffset = 0.5
 
+    val branchLength = -18.0
+
     val branches = Vector(
       (educationName, educationColor),
+      (teachingName, teachingColor),
       (publicationsName, publicationsColor),
-      (teachingName, teachingColor)
+      (socialName, socialColor),
     )
-    return TikzBranchConfig(branchXPos, branchYPos, titleYOffset, branchOffset, branches)
+    return TikzBranchConfig(branchXPos, branchYPos, titleYOffset, branchOffset, branches, branchLength)
   }
 
   def createBranches(branchconfig: TikzBranchConfig): String = {
@@ -161,22 +174,82 @@ object CV2Tikz {
   ): (String, String) = {
     val (graph, prevNode): (String, String) = item match {
       case cv: CV => {
+        if (branchMap.contains(workExperinceName))
+          branchCVItems(
+            date,
+            cv.workExperince,
+            branchMap.get(workExperinceName).get,
+            xOffset,
+            lastNode,
+            parentNode,
+            depth,
+            branchMap
+          )
+        else
+          branchCVItems(
+            date,
+            cv.education,
+            branchMap.get(educationName).get,
+            xOffset,
+            lastNode,
+            parentNode,
+            depth,
+            branchMap
+          )
         // branchCVItems(date, cv.education, TikzBranchConfig.education)
-        branchCVItems(date, cv.workExperince, branchMap.get(workExperinceName).get, xOffset, lastNode, parentNode, depth, branchMap)
       }
 
       case work: WorkExperince => {
-        branchCVItems(date, work.projects, branchMap.get(workExperinceName).get, xOffset, lastNode, parentNode, depth, branchMap)
+        branchCVItems(
+          date,
+          work.projects,
+          branchMap.get(projectsName).get,
+          xOffset,
+          lastNode,
+          parentNode,
+          depth,
+          branchMap
+        )
         //     git.merge().include(git.getRepository().resolve("projects")).call()
       }
-      case education: Education =>
-        branchCVItems(date, education.publications, branchMap.get(workExperinceName).get, xOffset, lastNode, parentNode, depth, branchMap)
-        //  branchCVItems(date, education.publications, "publications", git, path)
+      case education: Education => {
+        val (pubgraph, pubParentNode) = branchCVItems(
+          date,
+          education.publications,
+          branchMap.get(publicationsName).get,
+          xOffset,
+          lastNode,
+          parentNode,
+          depth,
+          branchMap
+        )
+        val (teachgraph, teachParentNode) = branchCVItems(
+          date,
+          education.teaching,
+          branchMap.get(teachingName).get,
+          xOffset,
+          pubParentNode,
+          parentNode,
+          depth,
+          branchMap
+        )
+        (pubgraph + teachgraph, teachParentNode)
+      }
+      //  branchCVItems(date, education.publications, "publications", git, path)
       //   git.merge().include(git.getRepository().resolve("publications")).call()
       //   branchCVItems(date, education.teaching, "teaching", git, path)
       //   git.merge().include(git.getRepository().resolve("teaching")).call()
       case project: Project =>
-        branchCVItems(date, project.technologies, branchMap.get(technologiesName).get, xOffset, lastNode, parentNode, depth, branchMap )
+        branchCVItems(
+          date,
+          project.technologies,
+          branchMap.get(technologiesName).get,
+          xOffset,
+          lastNode,
+          parentNode,
+          depth,
+          branchMap
+        )
       case _ => ("", lastNode)
 
     }
@@ -192,6 +265,30 @@ object CV2Tikz {
     if (cvitems.isEmpty) return Vector.empty[(CVItem, LocalDate)]
 
     cvitems.head match {
+      case tech: Teaching =>
+        cvitems.foldLeft(Vector { (tech, tech.start) })((acc, ele) =>
+          Vector(tech.copy(title = tech.title + ",  " + ele.title) -> tech.start)
+        )
+      /*
+        val unique = cvitems.foldLeft(Map[String, CVItem]())((acc, ele) => {
+          ele match {
+            case teaching: Teaching => {
+
+
+              if (acc.contains(teaching.title)) {
+                val old = acc(teaching.title)
+                val newTeaching =
+                  teaching.copy(title = old.title + " " + teaching.start.format(DateTimeFormatter.ofPattern("YY")))
+                acc + (teaching.title -> newTeaching)
+              } else
+                acc + (teaching.title -> teaching.copy(title =
+                  teaching.title + " " + teaching.start.format(DateTimeFormatter.ofPattern("YY"))
+                ))
+            }
+            case _ => acc
+          }
+        })
+        unique.map { case (k, v) => (v, v.start) }.toVector */
       case tech: Technology =>
         cvitems.foldLeft(Vector { (tech, tech.start) })((acc, ele) =>
           Vector(tech.copy(title = tech.title + ",  " + ele.title) -> tech.start)
@@ -217,9 +314,12 @@ object CV2Tikz {
       lastNode: String,
       parentNode: Option[String],
       depth: Int,
-      branchMap: Map[String, TikzBranch],
+      branchMap: Map[String, TikzBranch]
   ): (String, String) = {
     import scala.language.unsafeNulls
+
+    if(cvitems.isEmpty) return ("", lastNode)
+
 
     val sorted = sortCVItemsByDate(cvitems)
 
@@ -237,13 +337,13 @@ object CV2Tikz {
 
       val text = item match {
         case tech: Technology =>
-          s"""|\\node[draw, text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
+          s"""|\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
                if (first) s", xshift=${xOffset}cm" else ""
              } ] (label_$hash)  
               |{${item.title}};""".stripMargin
         case _ =>
           s"""
-            |\\node[draw, text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
+            |\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
               if (first) s", xshift=${xOffset}cm" else ""
             } ] (label_$hash)  
             |{${item.title}\\\\
@@ -269,11 +369,9 @@ object CV2Tikz {
         sb.append(pathToParent)
       }
       item match {
-        case withend: WorkExperince =>
-          sb.append(
-            s"\\node[left = 0cm of ${hash}branch] (datesend$hash) {${withend.`end`.format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
-          )
-        case _ =>
+        case withend: Education     => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend)
+        case withend: WorkExperince => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend)
+        case _                      =>
       }
 
       prevNode = s"label_$hash"
@@ -285,16 +383,9 @@ object CV2Tikz {
       prevNode = subLast
 
       item match {
-        case withend: WorkExperince => // CVItemWithEnd =>
-          sb.append(s"\\node[commit] (datestart${hash}branch) at  ($$(${prevNode} -|  ${hash}branch)$$) {};\n")
-          sb.append(
-            s"\\draw[-,${homeBranch.color}, line width=2pt] (${hash}branch) to[out=250,in=90] (datestart${hash}branch);\n"
-          )
-          sb.append(
-            s"\\node[left = 0cm of datestart${hash}branch] (datestart${hash}branch) {${withend.start
-                .format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
-          )
-        case _ =>
+        case withend: Education     => addStartTimeToGraph(sb, prevNode, hash, homeBranch, withend, prevNode == s"label_$hash")
+        case withend: WorkExperince => addStartTimeToGraph(sb, prevNode, hash, homeBranch, withend, prevNode == s"label_$hash")
+        case _                      =>
       }
 
     }
@@ -302,5 +393,40 @@ object CV2Tikz {
     sb.append(s"\\node[inv, xshift=-${xOffset}cm] (${invName}) at (${prevNode}.south) {};\n")
 
     return (sb.toString(), invName)
+  }
+
+  def addEndTimeToGraph(
+      sb: StringBuilder,
+      prevNode: String,
+      hash: String,
+      homeBranch: TikzBranch,
+      withend: CVItemWithEnd
+  ): Unit = {
+    sb.append(
+      s"\\node[left = 0cm of ${hash}branch] (datesend$hash) {${withend.`end`.format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
+    )
+  }
+
+  def addStartTimeToGraph(
+      sb: StringBuilder,
+      prevNodex: String,
+      hash: String,
+      homeBranch: TikzBranch,
+      withend: CVItemWithEnd,
+      space: Boolean,
+  ): Unit = {
+    var prevNode = prevNodex 
+    if(space) {
+      sb.append(s"\\node[inv, yshift=-0.2cm] (datestartinv${hash}branch) at (${prevNode}.south) {};\n")
+      prevNode = s"datestartinv${hash}branch"
+    }
+    sb.append(s"\\node[commit] (datestart${hash}branch) at  ($$(${prevNode} -|  ${hash}branch)$$) {};\n")
+    sb.append(
+      s"\\draw[-,${homeBranch.color}, line width=3pt] (${hash}branch) to[out=250,in=90] (datestart${hash}branch);\n"
+    )
+    sb.append(
+      s"\\node[left = 0cm of datestart${hash}branch] (datestart${hash}branch) {${withend.start
+          .format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
+    )
   }
 }

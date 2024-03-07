@@ -21,18 +21,18 @@ import com.ofenbeck.gitcv.WorkExperince
 import com.ofenbeck.gitcv.Education
 import com.ofenbeck.gitcv.Project
 
-class TikzBranch(val name: String, val color: String,  val xshift: Double,val yOffset: Double) {
+class TikzBranch(val name: String, val color: String,  val xshift: Double,val yOffset: Double, length: Double) {
   def branch: String = {
     s"\\node[branch, fill=$color, rotate=90] ($name) at ($xshift,$yOffset) {\\texttt{$name}};\n" +
-      s"\\draw[-, $color, line width=2pt] ($name) -- ($name |- 0,${-19});\n"
+      s"\\draw[-, $color, line width=2pt] ($name) -- ($name |- 0,${length});\n"
   }
 }
 
-case class TikzBranchConfig(branchXPos: Double , branchYPos: Double, titleYOffset: Double, branchOffset: Double, branches: Vector[(String, String)]) 
+case class TikzBranchConfig(branchXPos: Double , branchYPos: Double, titleYOffset: Double, branchOffset: Double, branches: Vector[(String, String)], branchLength: Double) 
 {
  
   val branchesWithOffset = branches.zipWithIndex.map { case ((name, color), index) =>
-    new TikzBranch(name, color, branchXPos + index * branchOffset, branchYPos) // + index * titleYOffset)
+    new TikzBranch(name, color, branchXPos + index * branchOffset, branchYPos, branchLength) // + index * titleYOffset)
   }
 
   val branchMap = branchesWithOffset.map(b => (b.name, b)).toMap

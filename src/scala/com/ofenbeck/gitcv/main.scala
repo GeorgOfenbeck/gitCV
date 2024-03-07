@@ -353,7 +353,7 @@ object Main extends App {
   import java.io.File
   import java.nio.file.Files
   import scala.language.unsafeNulls
-/*
+
   val directoryPath = "/tmp/cv"
   val directory = new File(directoryPath)
 
@@ -371,7 +371,7 @@ object Main extends App {
   }
 
   CV2Git.createGitRepositoryWithCV(directoryPath, cv)
-*/
+
   val tex = new File( "./cv.tex")
   val content = CV2Tikz.craeteTex(cv)
   Files.write(tex.toPath(), content.getBytes())
