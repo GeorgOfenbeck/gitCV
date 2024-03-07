@@ -347,7 +347,7 @@ object Main extends App {
     List(ethPhd, ethPhd0, ethMsc, tuBsc, vieBsc, htl)
   )
 
- // println(s"Hello World, ${cv.toJson}")
+  println(s"Hello World, ${cv.toJson}")
 
   // path is a temporary directory in the temporary folder of the system
   import java.io.File
