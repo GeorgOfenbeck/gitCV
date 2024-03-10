@@ -28,6 +28,8 @@ import java.time.format.DateTimeFormatter
 import com.ofenbeck.gitcv.Teaching
 import zio.Config.Bool
 import com.ofenbeck.gitcv.Main.introprogramming
+import com.ofenbeck.gitcv.Social
+import com.ofenbeck.gitcv.Publication
 
 object CV2Tikz {
 
@@ -47,12 +49,12 @@ object CV2Tikz {
   val technologiesColor = "beaublue"
   val socialColor = "orange"
 
-  val drawHelpers = false
+  val drawHelpers = true
 
-  val drawboxes = if(!drawHelpers)"" else "draw, "
+  val drawboxes = if (!drawHelpers) "" else "draw, "
 
   val fastcodeOverwrite = "How To Write Fast Numerical Code. [6 semesters]"
-  val introProgOverwrite = "Introduction to Programming. [8 semesters]"
+  val introProgOverwrite = "BSc Programming Courses (Java, C++). [8 semesters]"
   val textBoxWidth = 16
   val xshift = 0.2
   val multiNodeSpacing = 0.2
@@ -104,13 +106,13 @@ object CV2Tikz {
 
   def insertTikzSurrounding(content: String): String = {
     s"""
-        |\\begin{tikzpicture}[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]
+        |\\begin{tikzpicture}${if(drawHelpers)"[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]" else ""}
         |
         |\\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
         |\\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
         |\\definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
         |\\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
-        |\\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=${if(drawHelpers) "2pt" else "0pt"}]
+        |\\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=${if (drawHelpers) "2pt" else "0pt"}]
         |\\tikzstyle{every path}=[draw]  
         |\\tikzstyle{branch}=[draw,rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
         |
@@ -127,7 +129,7 @@ object CV2Tikz {
     val titleYOffset = 0.5
     val branchOffset = 0.5
 
-    val branchLength = -16.5
+    val branchLength = -18
 
     val branches = Vector(
       (workExperinceName, workExperinceColor),
@@ -209,7 +211,7 @@ object CV2Tikz {
       }
 
       case work: WorkExperince => {
-        branchCVItems(
+        val (workgraph, workParentNode) = branchCVItems(
           date,
           work.projects,
           branchMap.get(projectsName).get,
@@ -219,6 +221,17 @@ object CV2Tikz {
           depth,
           branchMap
         )
+        val (socialgraph, socialParentNode) = branchCVItems(
+          date,
+          work.socials,
+          branchMap.get(socialName).get,
+          xOffset,
+          workParentNode,
+          parentNode,
+          depth,
+          branchMap
+        )
+        (workgraph + socialgraph, socialParentNode)
         //     git.merge().include(git.getRepository().resolve("projects")).call()
       }
       case education: Education => {
@@ -242,7 +255,18 @@ object CV2Tikz {
           depth,
           branchMap
         )
-        (pubgraph + teachgraph, teachParentNode)
+        
+        val (socialgraph, socialParentNode) = branchCVItems(
+          date,
+          education.socials,
+          branchMap.get(socialName).get,
+          xOffset,
+          teachParentNode,
+          parentNode,
+          depth,
+          branchMap
+        )
+        (pubgraph + teachgraph + socialgraph, socialParentNode)
       }
       //  branchCVItems(date, education.publications, "publications", git, path)
       //   git.merge().include(git.getRepository().resolve("publications")).call()
@@ -292,9 +316,9 @@ object CV2Tikz {
           return Vector((fastcode, fastcode.start), (rest, rest.start))
         }
       case tech: Technology =>
-        cvitems.foldLeft(Vector { (tech, tech.start) })((acc, ele) =>
-          Vector(tech.copy(title = tech.title + ",  " + ele.title) -> tech.start)
-        )
+        Vector((tech.copy(title = cvitems.map(_.title).mkString(", "), description = ""),tech.start))
+      case social: Social =>
+        Vector((social.copy(title = cvitems.map(_.title).mkString(", "), description = ""),social.start))
       case _ =>
         val cronCVIems =
           cvitems.foldLeft(Vector.empty[(CVItem, LocalDate)])((acc, e) => {
@@ -337,11 +361,21 @@ object CV2Tikz {
         else s"below = 0.2cm of ${prevNode}.south"
 
       val text = item match {
-        case tech: Technology =>
+        case pub: Publication =>
           s"""|\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
                if (first) s", xshift=${xOffset}cm" else ""
              } ] (label_$hash)  
-              |{${item.title}};""".stripMargin
+              |{${if (depth == 1) "\\textbf{" else ""}${if (depth == 2) "\\textit{" else ""}${item.title}${
+               if (depth == 1 || depth == 2) "}" else ""
+             }\\\\
+              |${item.description}\\\\
+              |${if(pub.github.isDefined) s"Github: \\href{${pub.github.get}}{ \\includegraphics[height=0.4cm]{img/git.png}} " else ""}\\\\
+              """.stripMargin
+        /*case tech: Technology =>
+          s"""|\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
+               if (first) s", xshift=${xOffset}cm" else ""
+             } ] (label_$hash)  
+              |{${item.title}};""".stripMargin*/
         case _ =>
           s"""
             |\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
@@ -432,10 +466,11 @@ object CV2Tikz {
       hash: String,
       homeBranch: TikzBranch,
       withend: CVItemWithEnd,
-      incompleteOffset: Double,
+      incompleteOffset: Double
   ): Unit = {
     sb.append(
-      s"\\node[left = ${incompleteOffset}cm of ${hash}branch] (datesend$hash) {${withend.`end`.format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
+      s"\\node[left = ${incompleteOffset}cm of ${hash}branch] (datesend$hash) {${withend.`end`
+          .format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
     )
   }
 

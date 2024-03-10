@@ -77,19 +77,26 @@ object Main extends App {
 
     val viennaTrip = Social(
       start = startDateTime.plusDays(1).nn,
-      title = "Team Trip to Vienna",
+      title = "Team Vienna Trip",
       description = "Organizied and guided a team trip to Vienna"
     )
     val pokerEvenings = Social(
       start = startDateTime.plusDays(1).nn,
-      title = "Poker Evenings",
+      title = "Company Poker Evenings",
       description = "Organizied multiple poker evenings for the whole health department"
     )
 
     val beerTasting = Social(
       start = startDateTime.plusDays(1).nn,
-      title = "Beer Tasting",
+      title = "Company Beer Tasting",
       description = "Organizied a beer tasting event for the whole health department"
+    )
+
+
+    val boatTrips = Social(
+      start = startDateTime.plusDays(1).nn,
+      title = "Limmat Boetln",
+      description = ""
     )
 
     val climbing = Social(
@@ -100,7 +107,7 @@ object Main extends App {
 
     val kitsurf = Social(
       start = startDateTime.plusDays(1).nn,
-      title = "Kitsurf",
+      title = "Kitsurfing",
       description = "I am a passionate kitsurfer and regulary go with one of my work colleagues"
     )
 
@@ -116,7 +123,7 @@ object Main extends App {
         devOps,
         ragnarok
       ),
-      socials = List(viennaTrip, pokerEvenings, beerTasting, climbing, kitsurf)
+      socials = List(viennaTrip, pokerEvenings, beerTasting, boatTrips, climbing, kitsurf)
     )
   }
 
@@ -328,6 +335,23 @@ object Main extends App {
       parralelProgramming2015,
       compScience2012,
       compScience2013
+    ),
+    socials = List(
+      Social(
+        start = LocalDate.of(2016, 4, 1).nn,
+        title = "SOLA Stafette",
+        description = "Every year I captained a team of 14 runners in the SOLA Stafette"
+      ),
+      Social(
+        start = LocalDate.of(2015, 4, 1).nn,
+        title = "Team BBQs",
+        description = "Organizied many BBQs with the team"
+      ),
+      Social(
+        start = LocalDate.of(2012, 4, 1).nn,
+        title = "Poker Evenings",
+        description = "Organizied multiple poker evenings for the team"
+      ),
     )
   )
   val ethPhd0 = Education(
