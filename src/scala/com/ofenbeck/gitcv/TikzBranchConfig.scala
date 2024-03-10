@@ -23,9 +23,9 @@ import com.ofenbeck.gitcv.Project
 
 
 
-class TikzBranch(val name: String, val color: String,  val xshift: Double,val yOffset: Double, length: Double) {
+class TikzBranch(val name: String, val color: String,  val xshift: Double,val yOffset: Double, length: Double, white: Boolean = false) {
   def branch: String = {
-    s"\\node[branch, fill=$color, rotate=90,minimum width=3cm] ($name) at ($xshift,$yOffset) {\\texttt{$name}};\n" +
+    s"\\node[branch,${if(white) "white," else ""} fill=$color, rotate=90,minimum width=3cm] ($name) at ($xshift,$yOffset) {\\texttt{$name}};\n" +
       s"\\draw[-, $color, line width=2pt] ($name) -- ($name |- 0,${length});\n"
   }
 }
@@ -34,7 +34,7 @@ case class TikzBranchConfig(branchXPos: Double , branchYPos: Double, titleYOffse
 {
  
   val branchesWithOffset = branches.zipWithIndex.map { case ((name, color), index) =>
-    new TikzBranch(name, color, branchXPos + index * branchOffset, branchYPos, branchLength) // + index * titleYOffset)
+    new TikzBranch(name, color, branchXPos + index * branchOffset, branchYPos, branchLength, color == "DarkMidnightBlue") // + index * titleYOffset)
   }
 
   val branchMap = branchesWithOffset.map(b => (b.name, b)).toMap

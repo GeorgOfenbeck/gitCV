@@ -41,24 +41,25 @@ object CV2Tikz {
   val teachingName = "Teaching"
   val socialName = "Social"
 
-  val educationColor = "blue"
-  val workExperinceColor = "babyblue"
-  val publicationsColor = "red"
-  val teachingColor = "yellow"
-  val projectsColor = "green"
-  val technologiesColor = "beaublue"
-  val socialColor = "orange"
+  val educationColor = "DarkMidnightBlue"
+  val workExperinceColor = "DarkMidnightBlue"
+  val publicationsColor = "pistachio"
+  val teachingColor = "ivyblue"
+  val projectsColor = "pistachio"
+  val technologiesColor = "ivyblue"
+  val socialColor = "melrose"
 
-  val drawHelpers = true
+  val drawHelpers = false
 
   val drawboxes = if (!drawHelpers) "" else "draw, "
 
   val fastcodeOverwrite = "How To Write Fast Numerical Code. [6 semesters]"
   val introProgOverwrite = "BSc Programming Courses (Java, C++). [8 semesters]"
-  val textBoxWidth = 15.5
+  val textBoxWidth = 16
   val xshift = 0.2
   val multiNodeSpacing = 0.2
   val inCompleteIndent = 0.2
+  val fillcolor = "pattensblue"
 
   val mergeLineStyle = "line width=2pt, solid"
   val pointerLineStyle = "line width=1pt, densely dashed "
@@ -76,25 +77,33 @@ object CV2Tikz {
         |\usepackage{listings}
         |\usepackage{geometry}
         |\usepackage{hyperref}
+        |\usepackage{tabularx}
+        |\usepackage[dvipsnames]{xcolor}
         |\geometry{
-        |left=1cm,
+        |left=0cm,
         |right=1cm,
-        |top=1cm,
+        |top=0cm,
         |bottom=0cm,
         |includehead,
         |includefoot
         |}
+        |\definecolor{DarkMidnightBlue}{HTML}{1E488F}
+        |\definecolor{ivyblue}{HTML}{7DC8F7}
+        |\definecolor{pistachio}{HTML}{93C572}
+        |\definecolor{melrose}{HTML}{C7C1FF}
+        |\definecolor{pattensblue}{HTML}{DEF5FF}
+        |\definecolor{french}{HTML}{0072BB}
         |\begin{document}
-        |\lipsum[1]
         |""".stripMargin
         // |\draw[help lines] (-5,0) grid (10,-10);
         // |\resizebox{\columnwidth}{!}{%
+        //|\lipsum[1]
     val tail = """
         |\end{document}\n""".stripMargin
 
     val (graph1, y) = delegateToBranch(cv, LocalDate.now(), workBranches().branchMap, 0.0, "root", None, 1)
     val (graph2, y2) = delegateToBranch(cv, LocalDate.now(), educationBranches().branchMap, 0.0, "root", None, 1)
-    val workPicture: String = insertTikzSurrounding(createBranches(workBranches()) + graph1)
+    val workPicture: String = insertTikzSurrounding(createBranches(workBranches()) + graph1, withHeader = true)
 
     val educationPicture: String = insertTikzSurrounding(createBranches(educationBranches()) + graph2)
 
@@ -107,11 +116,26 @@ object CV2Tikz {
 
   def staticHeader(): String = {
     s"""
-        |\\node[${drawboxes} minimum width=3cm] at (-5,2) {};
+        |\\node[${drawboxes} ] (pic) at (14,5) {\\includegraphics[height=3cm]{img/cvpic_hor.jpg}};
+        |\\node[${drawboxes} ]  (name) at (1,6) {\\fontsize{24}{24}\\selectfont\\textbf{Georg Ofenbeck}};
+        |\\node[${drawboxes} below=0.5cm of name] (details) {
+        |\\begin{tabular}{ l l}
+        |Date of Birth: & 12.06.1984\\\\
+        |Languages: & German, English\\\\
+        |Nationality: & Austrian, Swiss C Permit\\\\
+        |\\href{https://www.linkedin.com/in/ofenbeck/}{\\includegraphics[height=0.4cm]{img/LinkedIn_Logo.png}}: & /in/ofenbeck\\\\
+        |\\end{tabular}
+        |};
+        |\\node[draw, french, line width=1.5pt,inner sep=5pt, text width=${textBoxWidth}cm, below right=1cm and 0cm of details, xshift=-4.55cm, ] (summary) {
+        |\\color{black}\\textbf{$$CV Summary_{(tl:tr)}$$}\\\\
+        |I am a Cloud Architect/Software Engineer/Tech Lead with a strong grasp on performance and scalability.
+        |Thanks to my background this experience ranges from low level programming to cloud architecture.
+        |I activly foster a strong team spirit by activly organizing many social events.
+        |};
     """.stripMargin
   }
 
-  def insertTikzSurrounding(content: String): String = {
+  def insertTikzSurrounding(content: String, withHeader: Boolean = false): String = {
     s"""
         |\\begin{tikzpicture}${
         if (drawHelpers)
@@ -125,8 +149,8 @@ object CV2Tikz {
         |\\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
         |\\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=${if (drawHelpers) "2pt" else "0pt"}]
         |\\tikzstyle{every path}=[draw]  
-        |\\tikzstyle{branch}=[draw,rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
-        |${staticHeader()}
+        |\\tikzstyle{branch}=[rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
+        |${if(withHeader) staticHeader() else ""}
         |\\node[inv] (root) at (0,0) {};
         """.stripMargin + content + """
         |\end{tikzpicture}%""".stripMargin
@@ -406,10 +430,13 @@ object CV2Tikz {
             |\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
               if (first) s", xshift=${xOffset}cm" else ""
             } ] (label_$hash)  
-            |{${if (depth == 1) "\\textbf{" else ""}${if (depth == 2) "\\textit{" else ""}${item.title}${
-              if (depth == 1 || depth == 2) "}" else ""
+            |{${if (depth == 1) "\\color{DarkMidnightBlue}\\underline{\\textbf{" else ""}${if (depth == 2) "\\textit{" else ""}${item.title}${
+              if (depth == 1)
+                "}}"
+                else if( depth == 2) "}" else ""
             }\\\\
-            |${item.description}};\n"
+            |\\label{${item.title.replaceAll(" ", "").substring(0,5)}}
+            |${item.description}};\n
             """.stripMargin
       }
       first = false
