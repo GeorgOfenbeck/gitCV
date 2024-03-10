@@ -55,7 +55,7 @@ object CV2Tikz {
 
   val fastcodeOverwrite = "How To Write Fast Numerical Code. [6 semesters]"
   val introProgOverwrite = "BSc Programming Courses (Java, C++). [8 semesters]"
-  val textBoxWidth = 16
+  val textBoxWidth = 15.5
   val xshift = 0.2
   val multiNodeSpacing = 0.2
   val inCompleteIndent = 0.2
@@ -75,6 +75,7 @@ object CV2Tikz {
         |\usepackage[dvipsnames]{xcolor}
         |\usepackage{listings}
         |\usepackage{geometry}
+        |\usepackage{hyperref}
         |\geometry{
         |left=1cm,
         |right=1cm,
@@ -104,9 +105,19 @@ object CV2Tikz {
         |$tail """.stripMargin
   }
 
+  def staticHeader(): String = {
+    s"""
+        |\\node[${drawboxes} minimum width=3cm] at (-5,2) {};
+    """.stripMargin
+  }
+
   def insertTikzSurrounding(content: String): String = {
     s"""
-        |\\begin{tikzpicture}${if(drawHelpers)"[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]" else ""}
+        |\\begin{tikzpicture}${
+        if (drawHelpers)
+          "[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]"
+        else ""
+      }
         |
         |\\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
         |\\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
@@ -115,8 +126,8 @@ object CV2Tikz {
         |\\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=${if (drawHelpers) "2pt" else "0pt"}]
         |\\tikzstyle{every path}=[draw]  
         |\\tikzstyle{branch}=[draw,rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
-        |
-        |\\node[inv] (root) at (0,0) {};"
+        |${staticHeader()}
+        |\\node[inv] (root) at (0,0) {};
         """.stripMargin + content + """
         |\end{tikzpicture}%""".stripMargin
   }
@@ -255,7 +266,7 @@ object CV2Tikz {
           depth,
           branchMap
         )
-        
+
         val (socialgraph, socialParentNode) = branchCVItems(
           date,
           education.socials,
@@ -316,9 +327,9 @@ object CV2Tikz {
           return Vector((fastcode, fastcode.start), (rest, rest.start))
         }
       case tech: Technology =>
-        Vector((tech.copy(title = cvitems.map(_.title).mkString(", "), description = ""),tech.start))
+        Vector((tech.copy(title = cvitems.map(_.title).mkString(", "), description = ""), tech.start))
       case social: Social =>
-        Vector((social.copy(title = cvitems.map(_.title).mkString(", "), description = ""),social.start))
+        Vector((social.copy(title = cvitems.map(_.title).mkString(", "), description = ""), social.start))
       case _ =>
         val cronCVIems =
           cvitems.foldLeft(Vector.empty[(CVItem, LocalDate)])((acc, e) => {
@@ -369,12 +380,26 @@ object CV2Tikz {
                if (depth == 1 || depth == 2) "}" else ""
              }\\\\
               |${item.description}\\\\
-              |${if(pub.github.isDefined) s"Github: \\href{${pub.github.get}}{ \\includegraphics[height=0.4cm]{img/git.png}} " else ""}\\\\
-              """.stripMargin
+              |${
+               if (pub.publication != "")
+                 s"Publication: \\href{${pub.publication}}{ \\includegraphics[height=0.4cm]{img/web.png}} "
+               else ""
+             }
+              |${
+               if (pub.github.isDefined)
+                 s"Github: \\href{${pub.github.get}}{ \\includegraphics[height=0.4cm]{img/git.png}} "
+               else ""
+             }
+              |${
+               if (pub.thesis.isDefined)
+                 s"Thesis: \\href{${pub.thesis.get}}{ \\includegraphics[height=0.4cm]{img/pdf.jpg}} "
+               else ""
+             } };
+            """.stripMargin
         /*case tech: Technology =>
           s"""|\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
                if (first) s", xshift=${xOffset}cm" else ""
-             } ] (label_$hash)  
+             } ] (label_$hash)
               |{${item.title}};""".stripMargin*/
         case _ =>
           s"""
@@ -406,9 +431,6 @@ object CV2Tikz {
       sb.append(path)
       sb.append(nodeAtBranch)
 
-      if (item.title == fastcodeOverwrite) multiNodeAtBranch(sb, hash, homeBranch, 6)
-      if (item.title == introProgOverwrite) multiNodeAtBranch(sb, hash, homeBranch, 8)
-
       // sb.append(s"\\node[commit] (${hash}blub) at (label_${hash}.south) {};\n)")
 
       parentNode.map { parent =>
@@ -416,6 +438,9 @@ object CV2Tikz {
           s"\\draw[-,${homeBranch.color}, ${mergeLineStyle}] (${nodeAtBranchLabel}) to[out=90,in=-90] ($parent);\n"
         sb.append(pathToParent)
       }
+
+      if (item.title == fastcodeOverwrite) multiNodeAtBranch(sb, hash, homeBranch, 6)
+      if (item.title == introProgOverwrite) multiNodeAtBranch(sb, hash, homeBranch, 8)
       item match {
         case withend: Education     => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend, incompleteOffset)
         case withend: WorkExperince => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend, incompleteOffset)
