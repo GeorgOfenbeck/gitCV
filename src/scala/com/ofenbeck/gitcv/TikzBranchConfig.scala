@@ -21,9 +21,11 @@ import com.ofenbeck.gitcv.WorkExperince
 import com.ofenbeck.gitcv.Education
 import com.ofenbeck.gitcv.Project
 
+
+
 class TikzBranch(val name: String, val color: String,  val xshift: Double,val yOffset: Double, length: Double) {
   def branch: String = {
-    s"\\node[branch, fill=$color, rotate=90] ($name) at ($xshift,$yOffset) {\\texttt{$name}};\n" +
+    s"\\node[branch, fill=$color, rotate=90,minimum width=3cm] ($name) at ($xshift,$yOffset) {\\texttt{$name}};\n" +
       s"\\draw[-, $color, line width=2pt] ($name) -- ($name |- 0,${length});\n"
   }
 }

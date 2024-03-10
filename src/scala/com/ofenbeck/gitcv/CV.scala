@@ -16,6 +16,13 @@ trait CVItemWithEnd extends CVItem {
   def end: LocalDate
 }
 
+final case class Social(
+    start: LocalDate,
+    title: String,
+    description: String = "",
+) extends CVItem
+
+
 final case class Teaching(
     start: LocalDate,
     title: String,
@@ -37,7 +44,8 @@ final case class WorkExperince(
     title: String,
     company: String,
     description: String,
-    projects: List[Project]
+    projects: List[Project],
+    socials: List[Social],
 ) extends CVItemWithEnd
 
 final case class Project(
@@ -57,7 +65,8 @@ final case class Education(
     school: String,
     description: String,
     publications: List[Publication],
-    teaching: List[Teaching] = List.empty
+    teaching: List[Teaching] = List.empty,
+    socials: List[Social] = List.empty
 ) extends CVItemWithEnd
 
 
@@ -109,4 +118,8 @@ object Publication {
 object Teaching {
   implicit val decoder: JsonDecoder[Teaching] = DeriveJsonDecoder.gen[Teaching]
   implicit val encoder: JsonEncoder[Teaching] = DeriveJsonEncoder.gen[Teaching]
+}
+object Social {
+  implicit val decoder: JsonDecoder[Social] = DeriveJsonDecoder.gen[Social]
+  implicit val encoder: JsonEncoder[Social] = DeriveJsonEncoder.gen[Social]
 }

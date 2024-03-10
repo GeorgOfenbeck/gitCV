@@ -27,6 +27,7 @@ import com.ofenbeck.gitcv.TikzBranch
 import java.time.format.DateTimeFormatter
 import com.ofenbeck.gitcv.Teaching
 import zio.Config.Bool
+import com.ofenbeck.gitcv.Main.introprogramming
 
 object CV2Tikz {
 
@@ -46,10 +47,19 @@ object CV2Tikz {
   val technologiesColor = "beaublue"
   val socialColor = "orange"
 
-  val drawboxes = "draw, "
+  val drawHelpers = false
 
+  val drawboxes = if(!drawHelpers)"" else "draw, "
+
+  val fastcodeOverwrite = "How To Write Fast Numerical Code. [6 semesters]"
+  val introProgOverwrite = "Introduction to Programming. [8 semesters]"
   val textBoxWidth = 16
   val xshift = 0.2
+  val multiNodeSpacing = 0.2
+  val inCompleteIndent = 0.2
+
+  val mergeLineStyle = "line width=2pt, solid"
+  val pointerLineStyle = "line width=1pt, densely dashed "
 
   // |\lipsum[1]
   def craeteTex(cv: CV): String = {
@@ -93,19 +103,18 @@ object CV2Tikz {
   }
 
   def insertTikzSurrounding(content: String): String = {
-    """
-        |\begin{tikzpicture}[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]
+    s"""
+        |\\begin{tikzpicture}[framed,background rectangle/.style={double,ultra thick,draw=red, top color=white, rounded corners}]
         |
-        |\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
-        |\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
-        |\definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
-        |\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
-        |\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=2pt]
-        |\tikzstyle{every path}=[draw]  
-        |\tikzstyle{branch}=[draw,rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
+        |\\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
+        |\\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
+        |\\definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
+        |\\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
+        |\\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=${if(drawHelpers) "2pt" else "0pt"}]
+        |\\tikzstyle{every path}=[draw]  
+        |\\tikzstyle{branch}=[draw,rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
         |
-        |\draw (0,0) -- (1,1);
-        |\node[commit] (root) at (0,0) {};"
+        |\\node[inv] (root) at (0,0) {};"
         """.stripMargin + content + """
         |\end{tikzpicture}%""".stripMargin
   }
@@ -126,7 +135,7 @@ object CV2Tikz {
       // ("Teaching", teachingColor),
       (projectsName, projectsColor),
       (technologiesName, technologiesColor),
-      (socialName, socialColor),
+      (socialName, socialColor)
       // (educationName, educationColor),
     )
     return TikzBranchConfig(branchXPos, branchYPos, titleYOffset, branchOffset, branches, branchLength)
@@ -139,13 +148,13 @@ object CV2Tikz {
     val titleYOffset = 0.5
     val branchOffset = 0.5
 
-    val branchLength = -18.0
+    val branchLength = -21.0
 
     val branches = Vector(
       (educationName, educationColor),
       (teachingName, teachingColor),
       (publicationsName, publicationsColor),
-      (socialName, socialColor),
+      (socialName, socialColor)
     )
     return TikzBranchConfig(branchXPos, branchYPos, titleYOffset, branchOffset, branches, branchLength)
   }
@@ -265,30 +274,23 @@ object CV2Tikz {
     if (cvitems.isEmpty) return Vector.empty[(CVItem, LocalDate)]
 
     cvitems.head match {
-      case tech: Teaching =>
-        cvitems.foldLeft(Vector { (tech, tech.start) })((acc, ele) =>
-          Vector(tech.copy(title = tech.title + ",  " + ele.title) -> tech.start)
-        )
-      /*
-        val unique = cvitems.foldLeft(Map[String, CVItem]())((acc, ele) => {
-          ele match {
-            case teaching: Teaching => {
-
-
-              if (acc.contains(teaching.title)) {
-                val old = acc(teaching.title)
-                val newTeaching =
-                  teaching.copy(title = old.title + " " + teaching.start.format(DateTimeFormatter.ofPattern("YY")))
-                acc + (teaching.title -> newTeaching)
-              } else
-                acc + (teaching.title -> teaching.copy(title =
-                  teaching.title + " " + teaching.start.format(DateTimeFormatter.ofPattern("YY"))
-                ))
-            }
-            case _ => acc
-          }
-        })
-        unique.map { case (k, v) => (v, v.start) }.toVector */
+      case teach: Teaching =>
+        if (cvitems.size < 2)
+          return Vector.empty[(CVItem, LocalDate)] // for the sake of desgin we drop the accuaracy of the date
+        else {
+          val fastcodeOrig = cvitems.find(_.title == "How To Write Fast Numerical Code").get
+          val fastcode = Teaching(
+            title = fastcodeOverwrite,
+            start = LocalDate.of(2017, 4, 1).nn,
+            description = fastcodeOrig.description
+          )
+          val rest = Teaching(
+            title = introProgOverwrite,
+            start = LocalDate.of(2016, 4, 1).nn,
+            description = ""
+          )
+          return Vector((fastcode, fastcode.start), (rest, rest.start))
+        }
       case tech: Technology =>
         cvitems.foldLeft(Vector { (tech, tech.start) })((acc, ele) =>
           Vector(tech.copy(title = tech.title + ",  " + ele.title) -> tech.start)
@@ -318,8 +320,7 @@ object CV2Tikz {
   ): (String, String) = {
     import scala.language.unsafeNulls
 
-    if(cvitems.isEmpty) return ("", lastNode)
-
+    if (cvitems.isEmpty) return ("", lastNode)
 
     val sorted = sortCVItemsByDate(cvitems)
 
@@ -346,31 +347,44 @@ object CV2Tikz {
             |\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
               if (first) s", xshift=${xOffset}cm" else ""
             } ] (label_$hash)  
-            |{${item.title}\\\\
+            |{${if (depth == 1) "\\textbf{" else ""}${if (depth == 2) "\\textit{" else ""}${item.title}${
+              if (depth == 1 || depth == 2) "}" else ""
+            }\\\\
             |${item.description}};\n"
             """.stripMargin
       }
       first = false
+
+      val incompleteOffset =
+        if (item.title == "Diploma Student, Molecular Biology" || item.title == "PhD student, Computer Science")
+          inCompleteIndent
+        else 0
+
       val node = s"\\node[commit, left=0.1cm of label_$hash] ($hash)  {};\n"
-      val path = s"\\draw[-,${homeBranch.color}, line width=2pt] ($hash -| ${homeBranch.xshift} ,0) -- ($hash);\n"
+      val path =
+        s"\\draw[-,${homeBranch.color},${pointerLineStyle}] ($hash -| ${homeBranch.xshift + incompleteOffset} ,0) -- ($hash);\n"
       val nodeAtBranchLabel = s"${hash}branch"
-      val nodeAtBranch = s"\\node[commit] (${nodeAtBranchLabel}) at  ($hash -| ${homeBranch.xshift},0) {};\n"
+      val nodeAtBranch =
+        s"\\node[commit] (${nodeAtBranchLabel}) at  ($hash -| ${homeBranch.xshift + incompleteOffset},0) {};\n"
 
       sb.append(text)
       sb.append(node)
       sb.append(path)
       sb.append(nodeAtBranch)
 
+      if (item.title == fastcodeOverwrite) multiNodeAtBranch(sb, hash, homeBranch, 6)
+      if (item.title == introProgOverwrite) multiNodeAtBranch(sb, hash, homeBranch, 8)
+
       // sb.append(s"\\node[commit] (${hash}blub) at (label_${hash}.south) {};\n)")
 
       parentNode.map { parent =>
         val pathToParent =
-          s"\\draw[-,${homeBranch.color}, line width=2pt] (${nodeAtBranchLabel}) to[out=90,in=-90] ($parent);\n"
+          s"\\draw[-,${homeBranch.color}, ${mergeLineStyle}] (${nodeAtBranchLabel}) to[out=90,in=-90] ($parent);\n"
         sb.append(pathToParent)
       }
       item match {
-        case withend: Education     => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend)
-        case withend: WorkExperince => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend)
+        case withend: Education     => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend, incompleteOffset)
+        case withend: WorkExperince => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend, incompleteOffset)
         case _                      =>
       }
 
@@ -383,9 +397,11 @@ object CV2Tikz {
       prevNode = subLast
 
       item match {
-        case withend: Education     => addStartTimeToGraph(sb, prevNode, hash, homeBranch, withend, prevNode == s"label_$hash")
-        case withend: WorkExperince => addStartTimeToGraph(sb, prevNode, hash, homeBranch, withend, prevNode == s"label_$hash")
-        case _                      =>
+        case withend: Education =>
+          addStartTimeToGraph(sb, prevNode, hash, homeBranch, withend, prevNode == s"label_$hash", incompleteOffset)
+        case withend: WorkExperince =>
+          addStartTimeToGraph(sb, prevNode, hash, homeBranch, withend, prevNode == s"label_$hash", incompleteOffset)
+        case _ =>
       }
 
     }
@@ -395,15 +411,31 @@ object CV2Tikz {
     return (sb.toString(), invName)
   }
 
+  def multiNodeAtBranch(
+      sb: StringBuilder,
+      hash: String,
+      homeBranch: TikzBranch,
+      count: Int
+  ): Unit = {
+    val nodeAtBranchLabel = s"${hash}branch"
+    for (i <- 0 to count) {
+      val nodeAbove =
+        s"\\node[commit, above = ${-3 * multiNodeSpacing + multiNodeSpacing * i}cm of ${nodeAtBranchLabel} ] (${nodeAtBranchLabel}$i)  {};\n"
+      sb.append(nodeAbove)
+      sb.append(s"\\draw[-,${homeBranch.color}, ${pointerLineStyle}] (${nodeAtBranchLabel}${i})  -- ($hash);\n")
+    }
+  }
+
   def addEndTimeToGraph(
       sb: StringBuilder,
       prevNode: String,
       hash: String,
       homeBranch: TikzBranch,
-      withend: CVItemWithEnd
+      withend: CVItemWithEnd,
+      incompleteOffset: Double,
   ): Unit = {
     sb.append(
-      s"\\node[left = 0cm of ${hash}branch] (datesend$hash) {${withend.`end`.format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
+      s"\\node[left = ${incompleteOffset}cm of ${hash}branch] (datesend$hash) {${withend.`end`.format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
     )
   }
 
@@ -414,19 +446,31 @@ object CV2Tikz {
       homeBranch: TikzBranch,
       withend: CVItemWithEnd,
       space: Boolean,
+      incompleteOffset: Double
   ): Unit = {
-    var prevNode = prevNodex 
-    if(space) {
-      sb.append(s"\\node[inv, yshift=-0.2cm] (datestartinv${hash}branch) at (${prevNode}.south) {};\n")
+    var prevNode = prevNodex
+    if (space) {
+      sb.append(s"\\node[inv, yshift=-0.1cm] (datestartinv${hash}branch) at (${prevNode}.south) {};\n")
       prevNode = s"datestartinv${hash}branch"
     }
-    sb.append(s"\\node[commit] (datestart${hash}branch) at  ($$(${prevNode} -|  ${hash}branch)$$) {};\n")
-    sb.append(
-      s"\\draw[-,${homeBranch.color}, line width=3pt] (${hash}branch) to[out=250,in=90] (datestart${hash}branch);\n"
-    )
-    sb.append(
-      s"\\node[left = 0cm of datestart${hash}branch] (datestart${hash}branch) {${withend.start
-          .format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
-    )
+    if (withend.title == "BSc, Medical Informatics") {
+      sb.append(s"\\node[commit] (bscend) at  (${hash}branch) {};\n")
+    } else {
+      sb.append(
+        s"\\node[commit, xshift=${-1 * incompleteOffset}cm] (datestart${hash}branch) at  ($$(${prevNode} -|  ${hash}branch)$$) {};\n"
+      )
+      sb.append(
+        s"\\draw[-,${homeBranch.color}, line width=3pt] (${hash}branch) to[out=250,in=90] (datestart${hash}branch);\n"
+      )
+      sb.append(
+        s"\\node[left = 0cm of datestart${hash}branch] (datestart${hash}branchtdate) {${withend.start
+            .format(DateTimeFormatter.ofPattern("MM/YY"))}};\n"
+      )
+      if (withend.title == "Diploma Student, Molecular Biology") {
+        sb.append(
+          s"\\draw[-,${homeBranch.color}, line width=3pt] (bscend) to[out=220,in=100] (datestart${hash}branch);\n"
+        )
+      }
+    }
   }
 }

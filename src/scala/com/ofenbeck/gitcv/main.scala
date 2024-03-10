@@ -75,6 +75,35 @@ object Main extends App {
       )
     )
 
+    val viennaTrip = Social(
+      start = startDateTime.plusDays(1).nn,
+      title = "Team Trip to Vienna",
+      description = "Organizied and guided a team trip to Vienna"
+    )
+    val pokerEvenings = Social(
+      start = startDateTime.plusDays(1).nn,
+      title = "Poker Evenings",
+      description = "Organizied multiple poker evenings for the whole health department"
+    )
+
+    val beerTasting = Social(
+      start = startDateTime.plusDays(1).nn,
+      title = "Beer Tasting",
+      description = "Organizied a beer tasting event for the whole health department"
+    )
+
+    val climbing = Social(
+      start = startDateTime.plusDays(1).nn,
+      title = "Climbing",
+      description = "I climb regularly with my some of my colleagues"
+    )
+
+    val kitsurf = Social(
+      start = startDateTime.plusDays(1).nn,
+      title = "Kitsurf",
+      description = "I am a passionate kitsurfer and regulary go with one of my work colleagues"
+    )
+
     WorkExperince(
       end = endDateTime,
       start = startDateTime,
@@ -86,7 +115,8 @@ object Main extends App {
         medicalPracticeManagmentSoftware,
         devOps,
         ragnarok
-      )
+      ),
+      socials = List(viennaTrip, pokerEvenings, beerTasting, climbing, kitsurf)
     )
   }
 
@@ -125,7 +155,18 @@ object Main extends App {
             Technology(start = startDateTime, "Kafka, Akka Streaming, Flink", "")
           )
         )
-      )
+      ),
+      socials = List(
+        Social(
+          start = startDateTime.plusDays(1).nn,
+          title = "Poker Evenings",
+          description = "Organizied multiple poker evenings for the team"
+        ),
+        Social(
+          start = startDateTime.plusDays(1).nn,
+          title = "Cinema Evenings",
+          description = "Regularly organized cinema evenings with some teammates"
+        )),
     )
   }
 
@@ -172,8 +213,8 @@ object Main extends App {
 
   val masterthesis = Publication(
     start = LocalDate.of(2011, 4, 1).nn,
-    title = "Micro Transactions in the Linux Kernel",
-    description = "A study on how to enable micro transaction support in the kernel of an OS.",
+    title = "High Performance Distributed Bio-Inspired Optimization Library",
+    description = "A parallel software library that implements the Evolution Strategy with Co-variance Matrix Adaptation (CMAES) using MPI for efficient parallelization.",
     github = Some("https://git.mpi-cbg.de/mosaic/software/black-box-optimization/libpcma/-/tree/master"),
     thesis = None,
     publication = "https://sbalzarini-lab.org//docs/Mueller2009b.pdf"
@@ -212,12 +253,12 @@ object Main extends App {
       "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
   )
 
-  val fastcode11 = Teaching(
-    start = LocalDate.of(2011, 4, 1).nn,
-    title = "How To Write Fast Numerical Code",
-    description =
-      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
-  )
+   val fastcode11 = Teaching(
+     start = LocalDate.of(2011, 4, 1).nn,
+     title = "How To Write Fast Numerical Code",
+     description =
+       "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+   )
 
   val introprogramming = Teaching(
     start = LocalDate.of(2016, 4, 1).nn,
@@ -310,7 +351,7 @@ object Main extends App {
 
   val tuBsc = Education(
     end = LocalDate.of(2007, 6, 1).nn,
-    start = LocalDate.of(2003, 9, 1).nn,
+    start = LocalDate.of(2003, 9, 2).nn,
     title = "BSc, Medical Informatics",
     school = "Technical University Vienna",
     description = "",
@@ -318,8 +359,8 @@ object Main extends App {
   )
 
   val vieBsc = Education(
-    end = LocalDate.of(2007, 5, 30).nn,
-    start = LocalDate.of(2003, 9, 2).nn,
+    end = LocalDate.of(2007, 6, 2).nn,
+    start = LocalDate.of(2003, 9, 1).nn,
     title = "Diploma Student, Molecular Biology",
     school = "Univerity of Vienna",
     description = "",
