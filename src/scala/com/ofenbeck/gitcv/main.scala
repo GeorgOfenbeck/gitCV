@@ -24,7 +24,7 @@ object Main extends App {
       technologies = List(
         Technology(
           start = startDateTime,
-          "Kubernetes, AKS, Cilium",
+          "Kubernetes (plain), AKS",
           "Improving scalability and maintainability issues"
         ),
         Technology(
@@ -38,7 +38,7 @@ object Main extends App {
     val ragnarok = Project(
       start = startDateTime.plusDays(1).nn,
       end = endDateTime.minusDays(1).nn,
-      title = "Ragnarok",
+      title = "Confidential Medical Data Messing System",
       description =
         "Design and implementation of a cloud native serverless application for a medical data messing system.",
       technologies = List(
@@ -49,7 +49,7 @@ object Main extends App {
         ),
         Technology(
           start = startDateTime,
-          "Azure managed storage Solutions",
+          "Azure managed storage solutions",
           "Using managed blob, table and queue storage for the serverless application"
         ),
         Technology(start = startDateTime, "Open Telemetry", "Implementation of distributed tracing")
@@ -65,7 +65,7 @@ object Main extends App {
         Technology(
           start = startDateTime,
           "Terraform",
-          "Migration from ARM templates and ansible to Terraform"
+          "Migration from ARM templates and Ansible to Terraform"
         ),
         Technology(
           start = startDateTime,

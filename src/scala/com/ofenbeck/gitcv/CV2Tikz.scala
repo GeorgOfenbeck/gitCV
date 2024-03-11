@@ -64,6 +64,8 @@ object CV2Tikz {
   val mergeLineStyle = "line width=2pt, solid"
   val pointerLineStyle = "line width=1pt, densely dashed "
 
+  var counter = 1
+
   // |\lipsum[1]
   def craeteTex(cv: CV): String = {
     val headers =
@@ -87,6 +89,9 @@ object CV2Tikz {
         |includehead,
         |includefoot
         |}
+        |\pagenumbering{gobble}
+        |\usepackage{array}
+        |\newcounter{mycounter}
         |\definecolor{DarkMidnightBlue}{HTML}{1E488F}
         |\definecolor{ivyblue}{HTML}{7DC8F7}
         |\definecolor{pistachio}{HTML}{93C572}
@@ -97,7 +102,7 @@ object CV2Tikz {
         |""".stripMargin
         // |\draw[help lines] (-5,0) grid (10,-10);
         // |\resizebox{\columnwidth}{!}{%
-        //|\lipsum[1]
+        // |\lipsum[1]
     val tail = """
         |\end{document}\n""".stripMargin
 
@@ -127,10 +132,11 @@ object CV2Tikz {
         |\\end{tabular}
         |};
         |\\node[draw, french, line width=1.5pt,inner sep=5pt, text width=${textBoxWidth}cm, below right=1cm and 0cm of details, xshift=-4.55cm, ] (summary) {
-        |\\color{black}\\textbf{$$CV Summary_{(tl:tr)}$$}\\\\
+        |\\color{black}\\textbf{$$CV Summary_{(tl:dr)}$$}\\\\
         |I am a Cloud Architect/Software Engineer/Tech Lead with a strong grasp on performance and scalability.
-        |Thanks to my background this experience ranges from low level programming to cloud architecture.
-        |I activly foster a strong team spirit by activly organizing many social events.
+        |This experience ranges from low level programming\\hyperlink{link20}{$$_{[1]}$$}\\hyperlink{link19}{$$_{[2]}$$}\\hyperlink{link18}{$$_{[3]}$$},
+        | over compilers\\hyperlink{link16}{$$_{[4]}$$} all the way to scaling big data applications\\hyperlink{link9}{$$_{[5]}$$} and SaaS solutions for sensitive data on a public cloud\\hyperlink{link1}{$$_{[6]}$$}.
+        |I activly foster a strong team spirit by activly organizing many social events\\hyperlink{link8}{$$_{[7]}$$}\\hyperlink{link14}{$$_{[8]}$$}\\hyperlink{link22}{$$_{[9]}$$}
         |};
     """.stripMargin
   }
@@ -150,7 +156,7 @@ object CV2Tikz {
         |\\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=${if (drawHelpers) "2pt" else "0pt"}]
         |\\tikzstyle{every path}=[draw]  
         |\\tikzstyle{branch}=[rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
-        |${if(withHeader) staticHeader() else ""}
+        |${if (withHeader) staticHeader() else ""}
         |\\node[inv] (root) at (0,0) {};
         """.stripMargin + content + """
         |\end{tikzpicture}%""".stripMargin
@@ -185,7 +191,7 @@ object CV2Tikz {
     val titleYOffset = 0.5
     val branchOffset = 0.5
 
-    val branchLength = -21.0
+    val branchLength = -23.0
 
     val branches = Vector(
       (educationName, educationColor),
@@ -400,25 +406,33 @@ object CV2Tikz {
           s"""|\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
                if (first) s", xshift=${xOffset}cm" else ""
              } ] (label_$hash)  
-              |{${if (depth == 1) "\\textbf{" else ""}${if (depth == 2) "\\textit{" else ""}${item.title}${
+              |{${if (depth == 1) "\\textbf{" else ""}${if (depth == 2) "\\textit{" else ""}
+              |\\hypertarget{link${counter}}{${item.title}}${
                if (depth == 1 || depth == 2) "}" else ""
              }\\\\
               |${item.description}\\\\
+              |\\vspace{0.1cm}
+              |\\begin{tabular}{ p{5cm} p{5cm} p{5cm}}
               |${
                if (pub.publication != "")
-                 s"Publication: \\href{${pub.publication}}{ \\includegraphics[height=0.4cm]{img/web.png}} "
+                 s" Publication: \\href{${pub.publication}}{\\centering \\includegraphics[height=0.4cm]{img/web.png}}  "
                else ""
              }
+              |&
               |${
                if (pub.github.isDefined)
-                 s"Github: \\href{${pub.github.get}}{ \\includegraphics[height=0.4cm]{img/git.png}} "
+                 s"Github: \\href{${pub.github.get}}{ \\centering \\includegraphics[height=0.4cm]{img/git.png}} "
                else ""
              }
+              |&
               |${
                if (pub.thesis.isDefined)
-                 s"Thesis: \\href{${pub.thesis.get}}{ \\includegraphics[height=0.4cm]{img/pdf.jpg}} "
+                 s"Thesis: \\href{${pub.thesis.get}}{ \\centering \\includegraphics[height=0.4cm]{img/pdf.jpg}} "
                else ""
-             } };
+             }
+              |\\\\
+              |\\end{tabular}
+              | };
             """.stripMargin
         /*case tech: Technology =>
           s"""|\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
@@ -430,17 +444,22 @@ object CV2Tikz {
             |\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
               if (first) s", xshift=${xOffset}cm" else ""
             } ] (label_$hash)  
-            |{${if (depth == 1) "\\color{DarkMidnightBlue}\\underline{\\textbf{" else ""}${if (depth == 2) "\\textit{" else ""}${item.title}${
+            |{${if (depth == 1) "\\color{DarkMidnightBlue}\\underline{\\textbf{" else ""}${
+              if (depth == 2) "\\textit{" else ""
+            }\\hypertarget{link${counter}}{${item.title}}${
               if (depth == 1)
                 "}}"
-                else if( depth == 2) "}" else ""
+              else if (depth == 2) "}"
+              else ""
             }\\\\
-            |\\label{${item.title.replaceAll(" ", "").substring(0,5)}}
+            |
             |${item.description}};\n
             """.stripMargin
+        // |\\label{${item.title.replaceAll(" ", "").substring(0,5)}}
       }
       first = false
 
+      counter = counter + 1
       val incompleteOffset =
         if (item.title == "Diploma Student, Molecular Biology" || item.title == "PhD student, Computer Science")
           inCompleteIndent
