@@ -415,7 +415,6 @@ object Main extends App {
     List(ethPhd, ethPhd0, ethMsc, tuBsc, vieBsc, htl)
   )
 
-  println(s"Hello World, ${cv.toJson}")
 
   // path is a temporary directory in the temporary folder of the system
   import java.io.File
@@ -443,10 +442,8 @@ object Main extends App {
   val tex = new File( "./cv.tex")
   val content = CV2Tikz.craeteTex(cv)
   Files.write(tex.toPath(), content.getBytes())
-  // val path = java.nio.file.Files.createTempDirectory("temp").toString
 
-  // CV2Git.createGitRepositoryWithCV(path, cv)
-
-   //CV2Git.createGitRepositoryWithCV("/tmp/gitcv", cv)
+  val json = new File( "./cv.json")
+  Files.write(json.toPath(), cv.toJson.getBytes())
 
 }

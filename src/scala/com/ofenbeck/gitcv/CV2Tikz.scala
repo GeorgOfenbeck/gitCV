@@ -136,7 +136,7 @@ object CV2Tikz {
         |\\color{black}\\textbf{$$CV Summary_{(tl:dr)}$$}\\\\
         |I am a Cloud Architect/Software Engineer/Tech Lead with a strong grasp on performance and scalability.
         |This experience ranges from low level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}},
-        | over compilers\\hyperlink{link16}{${link2footnode(16)}} all the way to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} and SaaS solutions for sensitive data on a public cloud\\hyperlink{link1}{${link2footnode(1)}}.
+        | via compilers\\hyperlink{link16}{${link2footnode(16)}}, up to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} and SaaS solutions for sensitive data on a public cloud\\hyperlink{link1}{${link2footnode(1)}}.
         |I like to foster a strong team spirit by actively organizing many social events\\hyperlink{link8}{${link2footnode(8)}}\\hyperlink{link14}{${link2footnode(14)}}\\hyperlink{link22}{${link2footnode(22)}}.
         |};
     """.stripMargin
@@ -324,10 +324,6 @@ object CV2Tikz {
         )
         (pubgraph + teachgraph + socialgraph, socialParentNode)
       }
-      //  branchCVItems(date, education.publications, "publications", git, path)
-      //   git.merge().include(git.getRepository().resolve("publications")).call()
-      //   branchCVItems(date, education.teaching, "teaching", git, path)
-      //   git.merge().include(git.getRepository().resolve("teaching")).call()
       case project: Project =>
         branchCVItems(
           date,
@@ -449,11 +445,6 @@ object CV2Tikz {
               |\\end{tabular}
               | };
             """.stripMargin
-        /*case tech: Technology =>
-          s"""|\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
-               if (first) s", xshift=${xOffset}cm" else ""
-             } ] (label_$hash)
-              |{${item.title}};""".stripMargin*/
         case _ =>
           s"""
             |\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
@@ -470,7 +461,6 @@ object CV2Tikz {
             } ${link2footnode(counter)}\\hfill ${addPlace(item)}\\\\
             |${item.description}};\n
             """.stripMargin
-        // |\\label{${item.title.replaceAll(" ", "").substring(0,5)}}
       }
       first = false
 
@@ -491,8 +481,6 @@ object CV2Tikz {
       sb.append(node)
       sb.append(path)
       sb.append(nodeAtBranch)
-
-      // sb.append(s"\\node[commit] (${hash}blub) at (label_${hash}.south) {};\n)")
 
       parentNode.map { parent =>
         val pathToParent =
