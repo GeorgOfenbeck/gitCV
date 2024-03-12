@@ -49,7 +49,7 @@ object CV2Tikz {
   val technologiesColor = "ivyblue"
   val socialColor = "melrose"
 
-  val drawHelpers = false
+  val drawHelpers = false //true
 
   val drawboxes = if (!drawHelpers) "" else "draw, "
 
@@ -122,7 +122,7 @@ object CV2Tikz {
   def staticHeader(): String = {
     s"""
         |\\node[${drawboxes} ] (pic) at (14,5) {\\includegraphics[height=3cm]{img/cvpic_hor.jpg}};
-        |\\node[${drawboxes} ]  (name) at (1,6) {\\fontsize{24}{24}\\selectfont\\textbf{Georg Ofenbeck}};
+        |\\node[${drawboxes} ]  (name) at (1,6) {\\fontsize{24}{24}\\textbf{Georg Ofenbeck}};
         |\\node[${drawboxes} below=0.5cm of name] (details) {
         |\\begin{tabular}{ l l}
         |Date of Birth: & 12.06.1984\\\\
@@ -132,12 +132,12 @@ object CV2Tikz {
         |\\href{https://www.linkedin.com/in/ofenbeck/}{\\includegraphics[height=0.4cm]{img/LinkedIn_Logo.png}}: & /in/ofenbeck\\\\
         |\\end{tabular}
         |};
-        |\\node[draw, french, line width=1.5pt,inner sep=5pt, text width=${textBoxWidth}cm, below right=1cm and 0cm of details, xshift=-4.55cm, ] (summary) {
-        |\\color{black}\\textbf{$$CV Summary_{(tl:dr)}$$}\\\\
+        |\\node[draw, french, line width=1.2pt,inner sep=5pt, text width=${textBoxWidth}cm, below right=0.5cm and 0cm of details, xshift=-4.55cm, ] (summary) {
+        |\\color{black}\\textbf{\\fontsize{14}{14}$$CV Summary_{(tl:dr)}$$}\\\\
         |I am a Cloud Architect/Software Engineer/Tech Lead with a strong grasp on performance and scalability.
-        |This experience ranges from low level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}},
-        | via compilers\\hyperlink{link16}{${link2footnode(16)}}, up to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} and SaaS solutions for sensitive data on a public cloud\\hyperlink{link1}{${link2footnode(1)}}.
-        |I like to foster a strong team spirit by actively organizing many social events\\hyperlink{link8}{${link2footnode(8)}}\\hyperlink{link14}{${link2footnode(14)}}\\hyperlink{link22}{${link2footnode(22)}}.
+        |My experience ranges from low level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}},
+        | via compilers\\hyperlink{link16}{${link2footnode(16)}}, up to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} and SaaS solutions for sensitive data hosted in a public cloud environment\\hyperlink{link1}{${link2footnode(1)}}.
+        |I like to foster a strong team spirit by actively organizing social events\\hyperlink{link8}{${link2footnode(8)}}\\hyperlink{link14}{${link2footnode(14)}}\\hyperlink{link22}{${link2footnode(22)}}.
         |};
     """.stripMargin
   }
@@ -172,7 +172,7 @@ object CV2Tikz {
         |\\tikzstyle{every path}=[draw]  
         |\\tikzstyle{branch}=[rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
         |${if (withHeader) staticHeader() else ""}
-        |\\node[inv] (root) at (0,0) {};
+        |\\node[inv] (root) at (0,-0.3) {};
         """.stripMargin + content + """
         |\end{tikzpicture}%""".stripMargin
   }
@@ -180,12 +180,12 @@ object CV2Tikz {
   def workBranches(): TikzBranchConfig = {
 
     val branchXPos = -2
-    val branchYPos = 0.0
+    val branchYPos = 0.5
 
     val titleYOffset = 0.5
     val branchOffset = 0.5
 
-    val branchLength = -18
+    val branchLength = -18.7
 
     val branches = Vector(
       (workExperienceName, workExperienceColor),
@@ -206,7 +206,7 @@ object CV2Tikz {
     val titleYOffset = 0.5
     val branchOffset = 0.5
 
-    val branchLength = -23.0
+    val branchLength = -23.5
 
     val branches = Vector(
       (educationName, educationColor),

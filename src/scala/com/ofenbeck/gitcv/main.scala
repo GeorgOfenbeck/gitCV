@@ -20,7 +20,7 @@ object Main extends App {
       end = endDateTime.minusDays(1).nn,
       title = "Medical Practice Management Software",
       description =
-        "I was responsible for improving scalability and maintainability issues. The software is used by \\textasciitilde 1000 medical practices in Switzerland.",
+        "I was responsible for improving scalability and maintainability issues. The software is used by $\\sim$1000 medical practices in Switzerland.",
       technologies = List(
         Technology(
           start = startDateTime,
@@ -77,7 +77,7 @@ object Main extends App {
 
     val viennaTrip = Social(
       start = startDateTime.plusDays(1).nn,
-      title = "Team Vienna Trip",
+      title = "Teamtrip Vienna",
       description = "Organizied and guided a team trip to Vienna"
     )
     val pokerEvenings = Social(
@@ -88,7 +88,7 @@ object Main extends App {
 
     val beerTasting = Social(
       start = startDateTime.plusDays(1).nn,
-      title = "Company Beer Tasting",
+      title = "Beer Tasting",
       description = "Organizied a beer tasting event for the whole health department"
     )
 
@@ -119,7 +119,7 @@ object Main extends App {
       description =
         s"""Various projects in the context of SaaS solutions within the healthcare sector.
           |The overarching theme was modernizing various components to use cloud native technologies after a prior \"lift and shift\" to Azure.
-          |My role was to lead the technical design and implementation in teams of up to 14 people.
+          |In my role as architect for the department, I lead the technical design and implementation for teams of up to 14 people per team.
           """.stripMargin,
       projects = List(
         medicalPracticeManagementSoftware,
@@ -139,7 +139,7 @@ object Main extends App {
       title = "Senior Software Engineer",
       company = "Swisscom, Data, Analytics and AI Department",
       description =
-        "Projects in the context of big data processing both streaming and classic batch ETLs. My main contribution was to improve ETL performance.",
+        "Projects in the context of big data processing with streaming and classic batch ETLs. My main contribution was to improve the ETL performance drastically.",
       projects = List(
         Project(
           start = startDateTime.plusDays(1).nn,
@@ -234,40 +234,41 @@ object Main extends App {
     start = LocalDate.of(2017, 4, 1).nn,
     title = "How To Write Fast Numerical Code",
     description =
-      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development." +
+        " Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
   )
 
   val fastcode16 = Teaching(
     start = LocalDate.of(2016, 4, 1).nn,
     title = "How To Write Fast Numerical Code",
     description =
-      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
   )
 
   val fastcode14 = Teaching(
     start = LocalDate.of(2014, 4, 1).nn,
     title = "How To Write Fast Numerical Code",
     description =
-      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
   )
   val fastcode13 = Teaching(
     start = LocalDate.of(2013, 4, 1).nn,
     title = "How To Write Fast Numerical Code",
     description =
-      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
   )
   val fastcode12 = Teaching(
     start = LocalDate.of(2012, 4, 1).nn,
     title = "How To Write Fast Numerical Code",
     description =
-      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+      "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
   )
 
    val fastcode11 = Teaching(
      start = LocalDate.of(2011, 4, 1).nn,
      title = "How To Write Fast Numerical Code",
      description =
-       "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. A general strategy for performance analysis and optimization is introduced that the students will apply in group projects that accompany the course. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
+       "This interdisciplinary course aims to give the student an understanding of performance and introduces foundations and state-of-the-art techniques in high performance software development. Supervised a wide range of projects including projects from the domain of machine learning, computer vision, financial modeling etc."
    )
 
   val introprogramming = Teaching(
@@ -322,7 +323,10 @@ object Main extends App {
     title = "PhD, Computer Science",
     school = "ETH Zurich",
     description =
-      "I worked on the topic of applying generic programming techniques to challenges in metaprogramming in the context of high performance code generators.",
+      s"""My PhD research explored aspects of generating high performance numerical code using domain specific languages and compilers.
+       |This required both a deep understanding of hardware performance characteristics and low level programming details,  
+       |as well as the ability to create abstractions through domain specific languages and compilers using Scala and C.
+         """.stripMargin,
     publications = List(thesis, randomTesting, genVector, roofLine),
     teaching = List(
       fastcode17,
@@ -363,9 +367,9 @@ object Main extends App {
     title = "PhD student, Computer Science",
     school = "ETH Zurich",
     description =
-      "Before switching phd advisor, I worked on enabling micro transaction support in the kernel of an OS",
+      "Before switching PhD topic, I worked on enabling micro transaction support in the kernel of an OS",
     publications = List.empty,
-    teaching = List(fastcode11)
+    teaching = List.empty//List(fastcode11)
   )
   val ethMsc = Education(
     end = LocalDate.of(2009, 11, 1).nn,
