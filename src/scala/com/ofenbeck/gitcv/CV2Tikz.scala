@@ -17,7 +17,7 @@ import java.util.UUID
 import java.nio.file.Files
 import com.ofenbeck.gitcv.CVItem
 import com.ofenbeck.gitcv.CVItemWithEnd
-import com.ofenbeck.gitcv.WorkExperince
+import com.ofenbeck.gitcv.WorkExperience
 import com.ofenbeck.gitcv.Education
 import com.ofenbeck.gitcv.Project
 import com.ofenbeck.gitcv.Technology
@@ -33,7 +33,7 @@ import com.ofenbeck.gitcv.Publication
 
 object CV2Tikz {
 
-  val workExperinceName = "Work Experince"
+  val workExperienceName = "Work Experience"
   val educationName = "Education"
   val projectsName = "Projects"
   val technologiesName = "Technologies"
@@ -42,7 +42,7 @@ object CV2Tikz {
   val socialName = "Social"
 
   val educationColor = "DarkMidnightBlue"
-  val workExperinceColor = "DarkMidnightBlue"
+  val workExperienceColor = "DarkMidnightBlue"
   val publicationsColor = "pistachio"
   val teachingColor = "ivyblue"
   val projectsColor = "pistachio"
@@ -128,17 +128,32 @@ object CV2Tikz {
         |Date of Birth: & 12.06.1984\\\\
         |Languages: & German, English\\\\
         |Nationality: & Austrian, Swiss C Permit\\\\
+        |Location: & Greater Zurich Area, CH\\\\
         |\\href{https://www.linkedin.com/in/ofenbeck/}{\\includegraphics[height=0.4cm]{img/LinkedIn_Logo.png}}: & /in/ofenbeck\\\\
         |\\end{tabular}
         |};
         |\\node[draw, french, line width=1.5pt,inner sep=5pt, text width=${textBoxWidth}cm, below right=1cm and 0cm of details, xshift=-4.55cm, ] (summary) {
         |\\color{black}\\textbf{$$CV Summary_{(tl:dr)}$$}\\\\
         |I am a Cloud Architect/Software Engineer/Tech Lead with a strong grasp on performance and scalability.
-        |This experience ranges from low level programming\\hyperlink{link20}{$$_{[1]}$$}\\hyperlink{link19}{$$_{[2]}$$}\\hyperlink{link18}{$$_{[3]}$$},
-        | over compilers\\hyperlink{link16}{$$_{[4]}$$} all the way to scaling big data applications\\hyperlink{link9}{$$_{[5]}$$} and SaaS solutions for sensitive data on a public cloud\\hyperlink{link1}{$$_{[6]}$$}.
-        |I activly foster a strong team spirit by activly organizing many social events\\hyperlink{link8}{$$_{[7]}$$}\\hyperlink{link14}{$$_{[8]}$$}\\hyperlink{link22}{$$_{[9]}$$}
+        |This experience ranges from low level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}},
+        | over compilers\\hyperlink{link16}{${link2footnode(16)}} all the way to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} and SaaS solutions for sensitive data on a public cloud\\hyperlink{link1}{${link2footnode(1)}}.
+        |I like to foster a strong team spirit by actively organizing many social events\\hyperlink{link8}{${link2footnode(8)}}\\hyperlink{link14}{${link2footnode(14)}}\\hyperlink{link22}{${link2footnode(22)}}.
         |};
     """.stripMargin
+  }
+  
+  def link2footnode(nr: Int): String = {
+    nr match
+      case 20 => "$_{[1]}$"
+      case 19 => "$_{[2]}$"
+      case 18 => "$_{[3]}$"
+      case 16 => "$_{[4]}$"
+      case 9 => "$_{[5]}$"
+      case 1 => "$_{[6]}$"
+      case 8 => "$_{[7]}$"
+      case 14 => "$_{[8]}$"
+      case 22 => "$_{[9]}$"
+      case _ => ""  
   }
 
   def insertTikzSurrounding(content: String, withHeader: Boolean = false): String = {
@@ -173,7 +188,7 @@ object CV2Tikz {
     val branchLength = -18
 
     val branches = Vector(
-      (workExperinceName, workExperinceColor),
+      (workExperienceName, workExperienceColor),
       // ("Publications", publicationsColor),
       // ("Teaching", teachingColor),
       (projectsName, projectsColor),
@@ -226,11 +241,11 @@ object CV2Tikz {
   ): (String, String) = {
     val (graph, prevNode): (String, String) = item match {
       case cv: CV => {
-        if (branchMap.contains(workExperinceName))
+        if (branchMap.contains(workExperienceName))
           branchCVItems(
             date,
-            cv.workExperince,
-            branchMap.get(workExperinceName).get,
+            cv.workExperience,
+            branchMap.get(workExperienceName).get,
             xOffset,
             lastNode,
             parentNode,
@@ -251,7 +266,7 @@ object CV2Tikz {
         // branchCVItems(date, cv.education, TikzBranchConfig.education)
       }
 
-      case work: WorkExperince => {
+      case work: WorkExperience => {
         val (workgraph, workParentNode) = branchCVItems(
           date,
           work.projects,
@@ -409,7 +424,7 @@ object CV2Tikz {
               |{${if (depth == 1) "\\textbf{" else ""}${if (depth == 2) "\\textit{" else ""}
               |\\hypertarget{link${counter}}{${item.title}}${
                if (depth == 1 || depth == 2) "}" else ""
-             }\\\\
+             }${link2footnode(counter)}\\\\
               |${item.description}\\\\
               |\\vspace{0.1cm}
               |\\begin{tabular}{ p{5cm} p{5cm} p{5cm}}
@@ -444,15 +459,15 @@ object CV2Tikz {
             |\\node[${drawboxes} text width=${textBoxWidth - xOffset * depth}cm, $allinpos ${
               if (first) s", xshift=${xOffset}cm" else ""
             } ] (label_$hash)  
-            |{${if (depth == 1) "\\color{DarkMidnightBlue}\\underline{\\textbf{" else ""}${
+            |{
+            |${if (depth == 1) "\\color{DarkMidnightBlue}\\underline{\\textbf{" else ""}${
               if (depth == 2) "\\textit{" else ""
             }\\hypertarget{link${counter}}{${item.title}}${
               if (depth == 1)
                 "}}"
               else if (depth == 2) "}"
               else ""
-            }\\\\
-            |
+            } ${link2footnode(counter)}\\hfill ${addPlace(item)}\\\\
             |${item.description}};\n
             """.stripMargin
         // |\\label{${item.title.replaceAll(" ", "").substring(0,5)}}
@@ -489,7 +504,7 @@ object CV2Tikz {
       if (item.title == introProgOverwrite) multiNodeAtBranch(sb, hash, homeBranch, 8)
       item match {
         case withend: Education     => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend, incompleteOffset)
-        case withend: WorkExperince => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend, incompleteOffset)
+        case withend: WorkExperience => addEndTimeToGraph(sb, prevNode, hash, homeBranch, withend, incompleteOffset)
         case _                      =>
       }
 
@@ -504,7 +519,7 @@ object CV2Tikz {
       item match {
         case withend: Education =>
           addStartTimeToGraph(sb, prevNode, hash, homeBranch, withend, prevNode == s"label_$hash", incompleteOffset)
-        case withend: WorkExperince =>
+        case withend: WorkExperience =>
           addStartTimeToGraph(sb, prevNode, hash, homeBranch, withend, prevNode == s"label_$hash", incompleteOffset)
         case _ =>
       }
@@ -515,6 +530,14 @@ object CV2Tikz {
 
     return (sb.toString(), invName)
   }
+
+  def addPlace(cvitem: CVItem): String ={
+    cvitem match
+      case work: WorkExperience => s"${work.company}"
+      case edu: Education => s"${edu.school}"
+      case _ => ""    
+  }
+
 
   def multiNodeAtBranch(
       sb: StringBuilder,

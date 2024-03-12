@@ -17,7 +17,7 @@ import java.util.UUID
 import java.nio.file.Files
 import com.ofenbeck.gitcv.CVItem
 import com.ofenbeck.gitcv.CVItemWithEnd
-import com.ofenbeck.gitcv.WorkExperince
+import com.ofenbeck.gitcv.WorkExperience
 import com.ofenbeck.gitcv.Education
 import com.ofenbeck.gitcv.Project
 

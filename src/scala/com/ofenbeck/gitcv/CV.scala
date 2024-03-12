@@ -38,7 +38,7 @@ final case class Publication(
     publication: String
 ) extends CVItem
 
-final case class WorkExperince(
+final case class WorkExperience(
     start: LocalDate,
     end: LocalDate,
     title: String,
@@ -75,7 +75,7 @@ final case class CV(
     email: String,
     phone: String,
     birthdate: LocalDate,
-    workExperince: List[WorkExperince],
+    workExperience: List[WorkExperience],
     education: List[Education]
 ) extends CVItem {
   def start: LocalDate = birthdate
@@ -87,11 +87,11 @@ object CV {
   implicit val decoder: JsonDecoder[CV] = DeriveJsonDecoder.gen[CV]
   implicit val encoder: JsonEncoder[CV] = DeriveJsonEncoder.gen[CV]
 }
-object WorkExperince {
-  implicit val decoder: JsonDecoder[WorkExperince] =
-    DeriveJsonDecoder.gen[WorkExperince]
-  implicit val encoder: JsonEncoder[WorkExperince] =
-    DeriveJsonEncoder.gen[WorkExperince]
+object WorkExperience {
+  implicit val decoder: JsonDecoder[WorkExperience] =
+    DeriveJsonDecoder.gen[WorkExperience]
+  implicit val encoder: JsonEncoder[WorkExperience] =
+    DeriveJsonEncoder.gen[WorkExperience]
 }
 object Project {
   implicit val decoder: JsonDecoder[Project] = DeriveJsonDecoder.gen[Project]

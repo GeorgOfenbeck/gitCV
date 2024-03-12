@@ -2,7 +2,7 @@ package com.ofenbeck.gitcv
 
 import zio.json._
 import com.ofenbeck.gitcv.CV
-import com.ofenbeck.gitcv.WorkExperince
+import com.ofenbeck.gitcv.WorkExperience
 import java.time.LocalDate
 import com.ofenbeck.gitcv.Project
 import scala.com.ofenbeck.gitcv.CV2Git
@@ -15,12 +15,12 @@ object Main extends App {
     val startDateTime = LocalDate.of(2022, 2, 1).nn
     val endDateTime = LocalDate.of(2024, 10, 3).nn
 
-    val medicalPracticeManagmentSoftware = Project(
+    val medicalPracticeManagementSoftware = Project(
       start = startDateTime.plusDays(1).nn,
       end = endDateTime.minusDays(1).nn,
-      title = "Medical Practice Managment Software",
+      title = "Medical Practice Management Software",
       description =
-        "I was responsible for improving scalability and maintainability issues. The software is used by ~1000 of medical practices in Switzerland.",
+        "I was responsible for improving scalability and maintainability issues. The software is used by \\textasciitilde 1000 medical practices in Switzerland.",
       technologies = List(
         Technology(
           start = startDateTime,
@@ -38,9 +38,9 @@ object Main extends App {
     val ragnarok = Project(
       start = startDateTime.plusDays(1).nn,
       end = endDateTime.minusDays(1).nn,
-      title = "Confidential Medical Data Messing System",
+      title = "Confidential Medical Data Messaging System",
       description =
-        "Design and implementation of a cloud native serverless application for a medical data messing system.",
+        "Design and implementation of a cloud native serverless application for medical data transfer.",
       technologies = List(
         Technology(
           start = startDateTime,
@@ -49,7 +49,7 @@ object Main extends App {
         ),
         Technology(
           start = startDateTime,
-          "Azure managed storage solutions",
+          "Azure managed storage and queue solutions",
           "Using managed blob, table and queue storage for the serverless application"
         ),
         Technology(start = startDateTime, "Open Telemetry", "Implementation of distributed tracing")
@@ -59,7 +59,7 @@ object Main extends App {
       start = startDateTime.plusDays(1).nn,
       end = endDateTime.minusDays(1).nn,
       title = "DevOps",
-      description = "Modernizing or creating new CI/CD pipelines for various products",
+      description = "Modernizing or creating new CI/CD pipelines including Infrastructure-as-Code for various products",
       technologies = List(
         Technology(start = startDateTime, "Azure DevOps", "Migration from Jenkins to Azure DevOps"),
         Technology(
@@ -107,19 +107,22 @@ object Main extends App {
 
     val kitsurf = Social(
       start = startDateTime.plusDays(1).nn,
-      title = "Kitsurfing",
+      title = "Kitesurfing",
       description = "I am a passionate kitsurfer and regulary go with one of my work colleagues"
     )
 
-    WorkExperince(
+    WorkExperience(
       end = endDateTime,
       start = startDateTime,
       title = "Senior Cloud Architect",
-      company = "Swisscom Health",
+      company = "Swisscom, Health",
       description =
-        "Various projects in the context of a medical practice managment software. Design and implementation of a cloud native serverless application for a medical data messing system. Modernizing or creating new CI/CD pipelines for various products.",
+        s"""Various projects in the context of SaaS solutions within the healthcare sector.
+          |The overarching theme was modernizing various components to use cloud native technologies after a prior \"lift and shift\" to Azure.
+          |My role was to lead the technical design and implementation in teams of up to 14 people.
+          """.stripMargin,
       projects = List(
-        medicalPracticeManagmentSoftware,
+        medicalPracticeManagementSoftware,
         devOps,
         ragnarok
       ),
@@ -130,13 +133,13 @@ object Main extends App {
   def SwisscomDNA = {
     val startDateTime = LocalDate.of(2018, 4, 3).nn
     val endDateTime = LocalDate.of(2022, 1, 31).nn
-    WorkExperince(
+    WorkExperience(
       end = endDateTime,
       start = startDateTime,
       title = "Senior Software Engineer",
-      company = "Data, Analytics und AI Department, Swisscom",
+      company = "Swisscom, Data, Analytics and AI Department",
       description =
-        "Implementation of a big data pipeline for machine learning. Implementation of a high throughput streaming application.",
+        "Projects in the context of big data processing both streaming and classic batch ETLs. My main contribution was to improve ETL performance.",
       projects = List(
         Project(
           start = startDateTime.plusDays(1).nn,
@@ -147,7 +150,7 @@ object Main extends App {
           technologies = List(
             Technology(
               start = startDateTime,
-              "Apache Spark, HDFS, Cloud Foundary",
+              "Apache Spark, HDFS, Cloud Foundry",
               "working on two different on-premises big data applications"
             )
           )
@@ -186,7 +189,7 @@ object Main extends App {
     thesis = Some(
       "https://drive.google.com/file/d/0B9SH4AFkecQFMnkzWi1IRGprSFE/view?usp=sharing&resourcekey=0-LezbiD5TLA2KMTDOYifYvg"
     ),
-    publication = "https://www.research-collection.ethz.ch/handle/20.500.11850/271073"
+    publication = "https://doi.org/10.3929/ethz-b-000184594"
   )
 
   val randomTesting = Publication(
@@ -319,7 +322,7 @@ object Main extends App {
     title = "PhD, Computer Science",
     school = "ETH Zurich",
     description =
-      "I worked on the topic of appling generic programming techniques to challenges in metaprogramming in the context of high performance code generators.",
+      "I worked on the topic of applying generic programming techniques to challenges in metaprogramming in the context of high performance code generators.",
     publications = List(thesis, randomTesting, genVector, roofLine),
     teaching = List(
       fastcode17,
@@ -360,7 +363,7 @@ object Main extends App {
     title = "PhD student, Computer Science",
     school = "ETH Zurich",
     description =
-      "Before switching topic, I worked my first year on enabling micro transaction support in the kernel of an OS",
+      "Before switching phd advisor, I worked on enabling micro transaction support in the kernel of an OS",
     publications = List.empty,
     teaching = List(fastcode11)
   )
@@ -386,7 +389,7 @@ object Main extends App {
     end = LocalDate.of(2007, 6, 2).nn,
     start = LocalDate.of(2003, 9, 1).nn,
     title = "Diploma Student, Molecular Biology",
-    school = "Univerity of Vienna",
+    school = "University of Vienna",
     description = "",
     publications = List.empty
   )

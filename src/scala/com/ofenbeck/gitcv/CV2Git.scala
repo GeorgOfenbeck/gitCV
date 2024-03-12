@@ -17,7 +17,7 @@ import java.util.UUID
 import java.nio.file.Files
 import com.ofenbeck.gitcv.CVItem
 import com.ofenbeck.gitcv.CVItemWithEnd
-import com.ofenbeck.gitcv.WorkExperince
+import com.ofenbeck.gitcv.WorkExperience
 import com.ofenbeck.gitcv.Education
 import com.ofenbeck.gitcv.Project
 
@@ -238,10 +238,10 @@ object CV2Git {
     item match {
       case cv: CV => {
         branchCVItems(date, cv.education, "education", git, path)
-        branchCVItems(date, cv.workExperince, "workExperince", git, path)
+        branchCVItems(date, cv.workExperience, "workExperince", git, path)
       }
       
-        case work: WorkExperince => {
+        case work: WorkExperience => {
           branchCVItems(date, work.projects, "projects", git, path)
           git.merge().include(git.getRepository().resolve("projects")).call()
         }
