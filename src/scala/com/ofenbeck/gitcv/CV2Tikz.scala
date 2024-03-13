@@ -121,7 +121,7 @@ object CV2Tikz {
 
   def staticHeader(): String = {
     s"""
-        |\\node[${drawboxes} ] (pic) at (14,5) {\\includegraphics[height=3cm]{img/cvpic_hor.jpg}};
+        |\\node[${drawboxes} ] (pic) at (14.7,4.5) {\\includegraphics[height=3.5cm]{img/cvpic_new3.jpg}};
         |\\node[${drawboxes} ]  (name) at (1,6) {\\fontsize{24}{24}\\textbf{Georg Ofenbeck}};
         |\\node[${drawboxes} below=0.5cm of name] (details) {
         |\\begin{tabular}{ l l}
@@ -132,8 +132,8 @@ object CV2Tikz {
         |\\href{https://www.linkedin.com/in/ofenbeck/}{\\includegraphics[height=0.4cm]{img/LinkedIn_Logo.png}}: & /in/ofenbeck\\\\
         |\\end{tabular}
         |};
-        |\\node[draw, french, line width=1.2pt,inner sep=5pt, text width=${textBoxWidth}cm, below right=0.5cm and 0cm of details, xshift=-4.55cm, ] (summary) {
-        |\\color{black}\\textbf{\\fontsize{14}{14}$$CV Summary_{(tl:dr)}$$}\\\\
+        |\\node[draw, french, line width=1.2pt,inner sep=10pt, text width=${textBoxWidth}cm, below right=0.5cm and 0cm of details, xshift=-4.55cm, ] (summary) {
+        |\\color{black}
         |I am a Cloud Architect/Software Engineer/Tech Lead with a strong grasp on performance and scalability.
         |My experience ranges from low level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}},
         | via compilers\\hyperlink{link16}{${link2footnode(16)}}, up to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} and SaaS solutions for sensitive data hosted in a public cloud environment\\hyperlink{link1}{${link2footnode(1)}}.
@@ -172,7 +172,7 @@ object CV2Tikz {
         |\\tikzstyle{every path}=[draw]  
         |\\tikzstyle{branch}=[rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
         |${if (withHeader) staticHeader() else ""}
-        |\\node[inv] (root) at (0,-0.3) {};
+        |\\node[inv] (root) at (0,-0) {};
         """.stripMargin + content + """
         |\end{tikzpicture}%""".stripMargin
   }
