@@ -182,7 +182,7 @@ object Main extends App {
 
   val thesis = Publication(
     start = LocalDate.of(2017, 4, 1).nn,
-    title = "Generic Programming Applied on the Time Dimension of Meta Programming",
+    title = "Generic Programming in Meta Programming to abstract over Implementation Space and Time",
     description =
       "How to apply generic programming techniques to challenges in metaprogramming in the context of high performance code generators.",
     github = Some("https://github.com/GeorgOfenbeck/SpaceTime"),

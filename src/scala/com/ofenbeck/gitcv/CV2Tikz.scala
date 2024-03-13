@@ -168,7 +168,7 @@ object CV2Tikz {
         |\\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
         |\\definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
         |\\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
-        |\\tikzstyle{inv}=[draw,circle,fill=white,inner sep=0pt,minimum size=${if (drawHelpers) "2pt" else "0pt"}]
+        |\\tikzstyle{inv}=[draw,circle,white, fill=white,inner sep=0pt,minimum size=${if (drawHelpers) "2pt" else "0pt"}]
         |\\tikzstyle{every path}=[draw]  
         |\\tikzstyle{branch}=[rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
         |${if (withHeader) staticHeader() else ""}
