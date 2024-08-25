@@ -20,7 +20,7 @@ object Main extends App {
       end = endDateTime.minusDays(1).nn,
       title = "Medical Practice Management Software",
       description =
-        "I was responsible for improving scalability and maintainability issues. The software is used by $\\sim$1000 medical practices in Switzerland.",
+        "I was responsible for improving scalability and maintainability issues. The software is used by approximately 1000 medical practices in Switzerland.",
       technologies = List(
         Technology(
           start = startDateTime,
@@ -59,7 +59,7 @@ object Main extends App {
       start = startDateTime.plusDays(1).nn,
       end = endDateTime.minusDays(1).nn,
       title = "DevOps",
-      description = "Modernizing or creating new CI/CD pipelines including Infrastructure-as-Code for various products",
+      description = "Modernized or created new CI/CD pipelines, including Infrastructure-as-Code, for various products",
       technologies = List(
         Technology(start = startDateTime, "Azure DevOps", "Migration from Jenkins to Azure DevOps"),
         Technology(
@@ -119,7 +119,7 @@ object Main extends App {
       description =
         s"""Various projects in the context of SaaS solutions within the healthcare sector.
           |The overarching theme was modernizing various components to use cloud native technologies after a prior \"lift and shift\" to Azure.
-          |In my role as architect for the department, I lead the technical design and implementation for teams of up to 14 people per team.
+          |In my role as architect for the department, I led the technical design and implementation for teams of up to 14 members.
           """.stripMargin,
       projects = List(
         medicalPracticeManagementSoftware,
@@ -139,7 +139,7 @@ object Main extends App {
       title = "Senior Software Engineer",
       company = "Swisscom, Data, Analytics and AI Department",
       description =
-        "Projects in the context of big data processing with streaming and classic batch ETLs. My main contribution was to improve the ETL performance drastically.",
+        "Projects in the context of big data processing with streaming and classic batch ETLs. My main contribution was significantly improving ETL performance.",
       projects = List(
         Project(
           start = startDateTime.plusDays(1).nn,

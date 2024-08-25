@@ -104,7 +104,7 @@ object CV2Tikz {
         // |\resizebox{\columnwidth}{!}{%
         // |\lipsum[1]
     val tail = """
-        |\end{document}\n""".stripMargin
+        |\end{document}\n"""
 
     val (graph1, y) = delegateToBranch(cv, LocalDate.now(), workBranches().branchMap, 0.0, "root", None, 1)
     val (graph2, y2) = delegateToBranch(cv, LocalDate.now(), educationBranches().branchMap, 0.0, "root", None, 1)
@@ -116,32 +116,35 @@ object CV2Tikz {
         |$headers
         |$workPicture
         |$educationPicture 
-        |$tail """.stripMargin
+        |$tail """.stripMargin//.stripMargin.strip.split("\n").filter(_.trim.nonEmpty).mkString("\n")
   }
 
   def staticHeader(): String = {
     s"""
-        |\\node[${drawboxes} ] (pic) at (14.7,4.5) {\\includegraphics[height=3.5cm]{img/cvpic_new3.jpg}};
-        |\\node[${drawboxes} ]  (name) at (1,6) {\\fontsize{24}{24}\\textbf{Georg Ofenbeck}};
-        |\\node[${drawboxes} below=0.5cm of name] (details) {
+        |\\node[${drawboxes} ] (pic) at (15,4.5) {\\includegraphics[height=3.5cm]{img/20240804_165322-EDIT-EDIT.jpg}};
+        |\\node[anchor= west, ${drawboxes} ]  (name) at (-2.5,6.4) {\\fontsize{24}{24}\\textbf{Georg Ofenbeck}};
+        |\\node[anchor= west, ${drawboxes} ] (details) at (name.south west) [below=0.5cm of name, xshift=1.15cm] {
         |\\begin{tabular}{ l l}
         |Date of Birth: & 12.06.1984\\\\
         |Languages: & German, English\\\\
         |Nationality: & Austrian, Swiss C Permit\\\\
         |Location: & Greater Zurich Area, CH\\\\
+        |Contact: & TO BE REPLACED - REMOVED FOR git ####\\\\
         |\\href{https://www.linkedin.com/in/ofenbeck/}{\\includegraphics[height=0.4cm]{img/LinkedIn_Logo.png}}: & /in/ofenbeck\\\\
         |\\end{tabular}
         |};
-        |\\node[draw, french, line width=1.2pt,inner sep=10pt, text width=${textBoxWidth}cm, below right=0.5cm and 0cm of details, xshift=-4.55cm, ] (summary) {
+        |\\node[draw, french, line width=1.2pt,inner sep=10pt, text width=${textBoxWidth-0.5}cm, below right=0.5cm and 0cm of details, xshift=-6.85cm, ] (summary) {
         |\\color{black}
-        |I am a Cloud Architect/Software Engineer/Tech Lead with a strong grasp on performance and scalability.
-        |My experience ranges from low level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}},
-        | via compilers\\hyperlink{link16}{${link2footnode(16)}}, up to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} and SaaS solutions for sensitive data hosted in a public cloud environment\\hyperlink{link1}{${link2footnode(1)}}.
-        |I like to foster a strong team spirit by actively organizing social events\\hyperlink{link8}{${link2footnode(8)}}\\hyperlink{link14}{${link2footnode(14)}}\\hyperlink{link22}{${link2footnode(22)}}.
+        |I am a Cloud Architect and Software Tech Lead with a CS PhD from ETH Zurich. I have a strong grasp on performance and scalability,  
+        |with experience spanning from low level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}}, developing compilers for DSLs in the field of high performance libraries\\hyperlink{link16}{${link2footnode(16)}},
+        | to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} using Spark, and modernizing and operating of SaaS solutions for sensitive data hosted in a public cloud environment\\hyperlink{link1}{${link2footnode(1)}}.
+        | I actively foster strong team spirit by organizing social events\\hyperlink{link8}{${link2footnode(8)}}\\hyperlink{link14}{${link2footnode(14)}}\\hyperlink{link22}{${link2footnode(22)}}.
         |};
     """.stripMargin
   }
   
+
+
   def link2footnode(nr: Int): String = {
     nr match
       case 20 => "$_{[1]}$"
