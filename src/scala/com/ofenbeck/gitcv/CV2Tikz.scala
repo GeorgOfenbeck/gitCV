@@ -129,7 +129,7 @@ object CV2Tikz {
         |Languages: & German, English\\\\
         |Nationality: & Austrian, Swiss C Permit\\\\
         |Location: & Greater Zurich Area, CH\\\\
-        |Contact: & TO BE REPLACED - REMOVED FOR git ####\\\\
+        |Contact: & Email and Phone Number on request\\\\
         |\\href{https://www.linkedin.com/in/ofenbeck/}{\\includegraphics[height=0.4cm]{img/LinkedIn_Logo.png}}: & /in/ofenbeck\\\\
         |\\end{tabular}
         |};

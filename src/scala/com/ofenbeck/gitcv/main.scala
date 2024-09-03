@@ -119,7 +119,7 @@ object Main extends App {
       description =
         s"""Various projects in the context of SaaS solutions within the healthcare sector.
           |The overarching theme was modernizing various components to use cloud native technologies after a prior \"lift and shift\" to Azure.
-          |In my role as architect for the department, I led the technical design and implementation for teams of up to 14 members.
+          |In my role as architect for the department, I led the technical design and implementation of multiple teams of up to 20 members.
           """.stripMargin,
       projects = List(
         medicalPracticeManagementSoftware,
