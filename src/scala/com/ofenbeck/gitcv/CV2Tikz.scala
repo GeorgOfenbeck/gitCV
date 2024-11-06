@@ -84,7 +84,7 @@ object CV2Tikz {
         |\geometry{
         |left=0cm,
         |right=1cm,
-        |top=0cm,
+        |top=-0.5cm,
         |bottom=0cm,
         |includehead,
         |includefoot

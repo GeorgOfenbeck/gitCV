@@ -12,7 +12,7 @@ object Main extends App {
 
   def SwisscomHealth = {
 
-    val startDateTime = LocalDate.of(2022, 2, 1).nn
+    val startDateTime = LocalDate.of(2021, 2, 1).nn
     val endDateTime = LocalDate.of(2024, 10, 3).nn
 
     val medicalPracticeManagementSoftware = Project(
@@ -132,7 +132,7 @@ object Main extends App {
 
   def SwisscomDNA = {
     val startDateTime = LocalDate.of(2018, 4, 3).nn
-    val endDateTime = LocalDate.of(2022, 1, 31).nn
+    val endDateTime = LocalDate.of(2021, 1, 31).nn
     WorkExperience(
       end = endDateTime,
       start = startDateTime,
@@ -187,7 +187,7 @@ object Main extends App {
       "How to apply generic programming techniques to challenges in metaprogramming in the context of high performance code generators.",
     github = Some("https://github.com/GeorgOfenbeck/SpaceTime"),
     thesis = Some(
-      "https://drive.google.com/file/d/0B9SH4AFkecQFMnkzWi1IRGprSFE/view?usp=sharing&resourcekey=0-LezbiD5TLA2KMTDOYifYvg"
+      "https://www.research-collection.ethz.ch/bitstream/handle/20.500.11850/184594/Thesis_Ofenbeck_final.pdf?sequence=1&isAllowed=y"
     ),
     publication = "https://doi.org/10.3929/ethz-b-000184594"
   )
