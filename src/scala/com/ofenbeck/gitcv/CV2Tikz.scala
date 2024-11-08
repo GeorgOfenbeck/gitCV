@@ -55,7 +55,7 @@ object CV2Tikz {
 
   val fastcodeOverwrite = "How To Write Fast Numerical Code. [6 semesters]"
   val introProgOverwrite = "BSc Programming Courses (Java, C++). [8 semesters]"
-  val textBoxWidth = 16
+  val textBoxWidth = 16.2
   val xshift = 0.2
   val multiNodeSpacing = 0.2
   val inCompleteIndent = 0.2
@@ -123,7 +123,7 @@ object CV2Tikz {
     s"""
         |\\node[${drawboxes} ] (pic) at (15,4.5) {\\includegraphics[height=3.5cm]{img/20240804_165322-EDIT-EDIT.jpg}};
         |\\node[anchor= west, ${drawboxes} ]  (name) at (-2.5,6.4) {\\fontsize{24}{24}\\textbf{Georg Ofenbeck}};
-        |\\node[anchor= west, ${drawboxes} ] (details) at (name.south west) [below=0.5cm of name, xshift=1.15cm] {
+        |\\node[anchor= west, ${drawboxes} ] (details) at (name.south west) [below=0.5cm of name, xshift=0.9cm] {
         |\\begin{tabular}{ l l}
         |Date of Birth: & 12.06.1984\\\\
         |Languages: & German, English\\\\
@@ -133,17 +133,26 @@ object CV2Tikz {
         |\\href{https://www.linkedin.com/in/ofenbeck/}{\\includegraphics[height=0.4cm]{img/LinkedIn_Logo.png}}: & /in/ofenbeck\\\\
         |\\end{tabular}
         |};
-        |\\node[draw, french, line width=1.2pt,inner sep=10pt, text width=${textBoxWidth-0.5}cm, below right=0.5cm and 0cm of details, xshift=-6.85cm, ] (summary) {
+        |\\node[draw, french, line width=1.2pt,inner sep=10pt, text width=${textBoxWidth-0.5}cm, below right=0.2cm and 0.25cm of details, xshift=-6.85cm, ] (summary) {
         |\\color{black}
-        |I am a Cloud Architect and Software Tech Lead with a CS PhD from ETH Zurich. I have a strong grasp on performance and scalability,  
-        |with experience spanning from low level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}}, developing compilers for DSLs in the field of high performance libraries\\hyperlink{link16}{${link2footnode(16)}},
-        | to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} using Spark, and modernizing and operating of SaaS solutions for sensitive data hosted in a public cloud environment\\hyperlink{link1}{${link2footnode(1)}}.
-        | I actively foster strong team spirit by organizing social events\\hyperlink{link8}{${link2footnode(8)}}\\hyperlink{link14}{${link2footnode(14)}}\\hyperlink{link22}{${link2footnode(22)}}.
+        |I am a Cloud Architect and Software Tech Lead with a PhD in Computer Science from ETH Zurich. 
+        |With expertise spanning from low-level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}} and compiler development for high-performance libraries\\hyperlink{link16}{${link2footnode(16)}}, to designing and scaling big data applications using Spark\\hyperlink{link9}{${link2footnode(9)}},
+        | I specialize in optimizing performance and scalability for complex systems.  
+        |My recent focus has been on modernizing and operating SaaS solutions for sensitive medical data in a public cloud environment\\hyperlink{link1}{${link2footnode(1)}}.\\\\
+        |Passionate about fostering a collaborative and inclusive team culture, I actively contribute to team-building activities and organize social events to strengthen team spirit\\hyperlink{link8}{${link2footnode(8)}}\\hyperlink{link14}{${link2footnode(14)}}\\hyperlink{link22}{${link2footnode(22)}}.
+        |
         |};
     """.stripMargin
   }
   
+/* 
 
+        |I possess a strong grasp on performance and scalability,  
+        |with experience spanning from low level programming\\hyperlink{link20}{${link2footnode(20)}}\\hyperlink{link19}{${link2footnode(19)}}\\hyperlink{link18}{${link2footnode(18)}}, developing compilers for DSLs in the field of high performance libraries\\hyperlink{link16}{${link2footnode(16)}},
+        | to scaling big data applications\\hyperlink{link9}{${link2footnode(9)}} using Spark. My most recent duty involved modernizing and operating of SaaS solutions for sensitive medical data hosted in a public cloud environment\\hyperlink{link1}{${link2footnode(1)}}.
+        |My recent focus has been on modernizing and operating SaaS solutions for sensitive medical data in a public cloud environment.
+        | I like to actively foster a strong team spirit by organizing social events\\hyperlink{link8}{${link2footnode(8)}}\\hyperlink{link14}{${link2footnode(14)}}\\hyperlink{link22}{${link2footnode(22)}}.
+ */
 
   def link2footnode(nr: Int): String = {
     nr match
@@ -175,7 +184,7 @@ object CV2Tikz {
         |\\tikzstyle{every path}=[draw]  
         |\\tikzstyle{branch}=[rectangle,rounded corners=3,fill=white,inner sep=2pt,minimum size=5pt]
         |${if (withHeader) staticHeader() else ""}
-        |\\node[inv] (root) at (0,-0) {};
+        |\\node[inv] (root) at (0,-0.5) {};
         """.stripMargin + content + """
         |\end{tikzpicture}%""".stripMargin
   }
